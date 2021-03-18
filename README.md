@@ -18,6 +18,8 @@ ROS melodic (http://wiki.ros.org/melodic)
 
 The example CBM-pop agent (CBMPopAgentNode) is made for Cordeau benchmark examples (https://neo.lcc.uma.es/vrp/vrp-instances/description-for-files-of-cordeaus-instances/), which are included in the data folder. For a custom optimization problem implementation, it is necessary to implement specific CBMPopAgent and CBMPopAlgorithm objects.
 
+Best found solutions and more information on the dataset can be found at https://sites.google.com/view/vrp-task-planning/c-mdvrp-benchmark.
+
 1. Run several CBM-pop agents (in different terminals):
 
 ```roslaunch cbm_pop_mdvrp cbm_pop_agent.launch name:=<agent name>```
