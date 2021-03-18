@@ -7,9 +7,16 @@ https://barbara0811.github.io/cbm_pop_mdvrp_optimization
 ## Requirements:
 ROS melodic (http://wiki.ros.org/melodic)
 
+## Init and build the workspace
+
+1. Setup a catkin workspace: https://catkin-tools.readthedocs.io/en/latest/quick_start.html
+2. Clone this repository to the workspace's ```src/``` folder
+3. Run ```catkin build```
+4. Make sure you have the ```devel/setup.bash``` sourced
+
 ## Run the optimization example
 
-The example CBM-pop agent (CBMPopAgentNode) is made for Cordeau benchmark examples, which are included in the data folder. For a custom optimization problem implementation, it is necessary to implement specific CBMPopAgent and CBMPopAlgorithm objects.
+The example CBM-pop agent (CBMPopAgentNode) is made for Cordeau benchmark examples (https://neo.lcc.uma.es/vrp/vrp-instances/description-for-files-of-cordeaus-instances/), which are included in the data folder. For a custom optimization problem implementation, it is necessary to implement specific CBMPopAgent and CBMPopAlgorithm objects.
 
 1. Run several CBM-pop agents (in different terminals):
 
