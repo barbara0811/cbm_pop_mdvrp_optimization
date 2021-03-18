@@ -46,13 +46,11 @@ class CBMPopAgentNode(CBMPopAgent):
         else:
             self.logger.error("Broken precedence!")
 
-        self.algorithm.best_sol_coalition.plot(self.mdvrp)
+        # uncomment to plot
+        # self.algorithm.best_sol_coalition.plot(self.mdvrp)
 
         self.logger.info("Best solution ranking parameters: \n {}".format(
             self.algorithm.best_sol_coalition.get_ranking_params()))
-
-        print self.algorithm.best_sol_coalition.get_ranking_params()
-        parser.calc_route_len(self.algorithm.best_sol_coalition, self.mdvrp)
 
 
 if __name__ == "__main__":
