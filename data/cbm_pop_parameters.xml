@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<root>
+	<parameters>
+		<alpha> 1.0 </alpha>
+		<sigma> 0.5 1.0 </sigma>
+		<rho> 0.3 </rho>
+		<pop_size> 50 </pop_size>
+		<iter_num> 20000 </iter_num>
+		<cycle_no_change> 1000 </cycle_no_change>
+		<timeout_s> 1200 </timeout_s>
+	</parameters>
+</root>

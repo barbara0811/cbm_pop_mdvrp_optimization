@@ -1,0 +1,19 @@
+<launch>
+    <arg name="name" default="ag1" />
+    <arg name="alg_params_path" default="data/cbm_pop_parameters.xml" />
+    <arg name="alg_params_pack" default="cbm_pop_mdvrp" />
+    <arg name="data_pack" default="cbm_pop_mdvrp" />
+    <arg name="data_dir" default="cordeau" />
+
+    <group ns="$(arg name)">
+	<remap from="optimize" to="/optimize"/>
+
+	<node name="cbm_pop_agent" pkg="cbm_pop_mdvrp" type="cbm_pop_agent_node.py" output="screen">
+		<param name="name" value="$(arg name)"/>
+		<param name="alg_params_path" value="$(arg alg_params_path)"/>
+		<param name="alg_params_pack" value="$(arg alg_params_pack)"/>
+		<param name="data_pack" value="$(arg data_pack)"/>
+		<param name="data_dir" value="$(arg data_dir)"/>
+        </node>
+     </group>
+</launch>
