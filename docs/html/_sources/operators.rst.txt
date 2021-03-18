@@ -1,0 +1,38 @@
+operators package
+=================
+
+Submodules
+----------
+
+operators\.auxiliary\_functions module
+--------------------------------------
+
+.. automodule:: operators.auxiliary_functions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+operators\.generational\_functions module
+-----------------------------------------
+
+.. automodule:: operators.generational_functions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+operators\.genetic\_operators module
+------------------------------------
+
+.. automodule:: operators.genetic_operators
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: operators
+    :members:
+    :undoc-members:
+    :show-inheritance:

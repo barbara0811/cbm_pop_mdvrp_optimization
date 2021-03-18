@@ -1,0 +1,1046 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cbm_pop_lib.common package &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cbm_pop_lib.cordeau_parser package" href="cbm_pop_lib.cordeau_parser.html" />
+    <link rel="prev" title="cbm_pop_lib.aux package" href="cbm_pop_lib.aux.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cbm-pop-lib-common-package">
+<h1>cbm_pop_lib.common package<a class="headerlink" href="#cbm-pop-lib-common-package" title="Permalink to this headline">¶</a></h1>
+<p>This package defines commonly used modules, such as CBM algorithm properties definition, chromosome and mdvrp modules.</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href="#cbm-alg-prop"><span class="std std-ref">cbm_alg_properties module</span></a></li>
+<li><a class="reference internal" href="#chromosome"><span class="std std-ref">chromosome module</span></a></li>
+<li><a class="reference internal" href="#mdvrp"><span class="std std-ref">mdvrp module</span></a></li>
+</ol>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-cbm_pop_lib.common.cbm_alg_properties">
+<span id="cbm-pop-lib-common-cbm-alg-properties-module"></span><span id="cbm-alg-prop"></span><h3>cbm_pop_lib.common.cbm_alg_properties module<a class="headerlink" href="#module-cbm_pop_lib.common.cbm_alg_properties" title="Permalink to this headline">¶</a></h3>
+<p>Definitions of CBM algorithm properties (variants and optimization criteria).</p>
+<dl class="function">
+<dt id="cbm_pop_lib.common.cbm_alg_properties.enum">
+<code class="descname">enum</code><span class="sig-paren">(</span><em>**enums</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/cbm_alg_properties.html#enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.cbm_alg_properties.enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines ENUM type.</p>
+<div class="line-block">
+<div class="line">Usage:</div>
+<div class="line">enum(name1=value1, name2=value2)</div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.cbm_alg_properties.problem_criteria">
+<code class="descname">problem_criteria</code><a class="headerlink" href="#cbm_pop_lib.common.cbm_alg_properties.problem_criteria" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">cbm_pop_lib.common.cbm_alg_properties.Enum</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.cbm_alg_properties.problem_variants">
+<code class="descname">problem_variants</code><a class="headerlink" href="#cbm_pop_lib.common.cbm_alg_properties.problem_variants" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">cbm_pop_lib.common.cbm_alg_properties.Enum</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cbm_pop_lib.common.chromosome">
+<span id="cbm-pop-lib-common-chromosome-module"></span><span id="chromosome"></span><h3>cbm_pop_lib.common.chromosome module<a class="headerlink" href="#module-cbm_pop_lib.common.chromosome" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome">
+<em class="property">class </em><code class="descname">Chromosome</code><span class="sig-paren">(</span><em>all_customers</em>, <em>max_vehicle_load</em>, <em>precedence_constraints</em>, <em>n</em>, <em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>TODO finish this..
+Description of Chromosome</p>
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.routes">
+<code class="descname">routes</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.routes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.total_quality">
+<code class="descname">total_quality</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.total_quality" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.total_cost">
+<code class="descname">total_cost</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.total_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.total_duration">
+<code class="descname">total_duration</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.total_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.max_vehicle_load">
+<code class="descname">max_vehicle_load</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.max_vehicle_load" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.capacity">
+<code class="descname">capacity</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.capacity" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">capacity[i]</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">max_vehicle_load[i]</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.idle_slots">
+<code class="descname">idle_slots</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.idle_slots" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.start_times">
+<code class="descname">start_times</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.start_times" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.end_times">
+<code class="descname">end_times</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.end_times" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.fitness">
+<code class="descname">fitness</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.unserved_customers">
+<code class="descname">unserved_customers</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.unserved_customers" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.all_customers">
+<code class="descname">all_customers</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.all_customers" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.prec_constraints">
+<code class="descname">prec_constraints</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.prec_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.all_constraints">
+<code class="descname">all_constraints</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.all_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.prec_matrix_indices">
+<code class="descname">prec_matrix_indices</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.prec_matrix_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.prec_matrix_nl">
+<code class="descname">prec_matrix_nl</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.prec_matrix_nl" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.prec_matrix">
+<code class="descname">prec_matrix</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.prec_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">prec_constraints,</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">prec_matrix</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">prec_matrix</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">prec_matrix_indices[x]</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.est_matrix">
+<code class="descname">est_matrix</code><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.est_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">prec_matrix</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">prec_matrix_nl</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">est_matrix</code></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>all_customers</strong> (<em>list</em>) – list of all customers to be scheduled</li>
+<li><strong>max_vehicle_load</strong> (<em>np.array</em>) – maximal load of a vehicle</li>
+<li><strong>precedence_constraints</strong> (<em>nx.DiGraph</em>) – precedence constraint graph</li>
+<li><strong>n</strong> (<em>int</em>) – number of customers in a problem</li>
+<li><strong>params</strong> (<em>dictionary</em>) – algorithm parameters (problem variant and criteria)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.add_arrow">
+<code class="descname">add_arrow</code><span class="sig-paren">(</span><em>line</em>, <em>position=None</em>, <em>size=15</em>, <em>color=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.add_arrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.add_arrow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an arrow to a plotted line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>line</strong> (<em>Line2D object</em>) – line object</li>
+<li><strong>position=None</strong> (<em>int</em>) – x-position of the arrow. If None, mean of xdata is taken</li>
+<li><strong>size=15</strong> (<em>int</em>) – size of the arrow in fontsize points</li>
+<li><strong>color=None</strong> (<em>int</em>) – if None, line color is taken</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.add_node">
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>node</em>, <em>vehicle</em>, <em>route</em>, <em>insertion_index</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.add_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a node to the route.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<em>int</em>) – node id</li>
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>route</strong> (<em>int</em>) – route id</li>
+<li><strong>insertion_index</strong> (<em>int</em>) – insertion index within the route</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.add_route">
+<code class="descname">add_route</code><span class="sig-paren">(</span><em>vehicle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.add_route"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.add_route" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an empty route to the chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vehicle</strong> (<em>int</em>) – vehicle id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.adjust_route_schedule">
+<code class="descname">adjust_route_schedule</code><span class="sig-paren">(</span><em>vehicle</em>, <em>start_route</em>, <em>start_index</em>, <em>duration</em>, <em>setup_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.adjust_route_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.adjust_route_schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjust route schedule for a vehicle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>start_route</strong> (<em>int</em>) – start route index</li>
+<li><strong>start_index</strong> (<em>int</em>) – start index within the route</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix of the vehicle</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix of the vehicle</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.adjust_schedule">
+<code class="descname">adjust_schedule</code><span class="sig-paren">(</span><em>duration</em>, <em>setup_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.adjust_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.adjust_schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjust the schedule timing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.calc_insertion_cost">
+<code class="descname">calc_insertion_cost</code><span class="sig-paren">(</span><em>j</em>, <em>n</em>, <em>route</em>, <em>setup</em>, <em>static</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.calc_insertion_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.calc_insertion_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the cost of insertion of a node in</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>self</strong> (<em>undefined</em>) – </li>
+<li><strong>j</strong> (<em>int</em>) – insertion index</li>
+<li><strong>n</strong> (<em>int</em>) – node id</li>
+<li><strong>route</strong> (<em>list</em>) – route</li>
+<li><strong>setup</strong> (<em>np.matrix</em>) – setup cost (time) matrix for the vehicle</li>
+<li><strong>static</strong> (<em>np.matrix</em>) – static cost (time) matrix for the vehicle</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">insertion cost</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.calc_min_insertion_cost">
+<code class="descname">calc_min_insertion_cost</code><span class="sig-paren">(</span><em>n</em>, <em>vehicle</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.calc_min_insertion_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.calc_min_insertion_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate minimal insertion cost location in the chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> (<em>int</em>) – node id</li>
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">[minimal cost, index of min insertion, route makespan]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.calc_possible_insertions">
+<code class="descname">calc_possible_insertions</code><span class="sig-paren">(</span><em>route</em>, <em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.calc_possible_insertions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.calc_possible_insertions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine possible insertion locations for a node within a specific route.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>route</strong> (<em>list</em>) – route</li>
+<li><strong>node</strong> (<em>int</em>) – node id</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">[a, b) - start and end index of possible insertions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.check_prec">
+<code class="descname">check_prec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.check_prec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.check_prec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if precedence constraints are satisfied in the schedule.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">are prec constraints ok</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone the chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a clone of chromosome</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome">Chromosome</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.evaluate_schedule">
+<code class="descname">evaluate_schedule</code><span class="sig-paren">(</span><em>duration</em>, <em>setup_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.evaluate_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.evaluate_schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate solution schedule.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.get_linearized_schedules">
+<code class="descname">get_linearized_schedules</code><span class="sig-paren">(</span><em>node_labels=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.get_linearized_schedules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.get_linearized_schedules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce linearized schedules (in order of the schedule) of the chromosome solution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node_labels=None</strong> (<em>list</em>) – node labels to be used</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">linearized schedule [[customer_label, start_time, end_time], ..]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.get_ranking_params">
+<code class="descname">get_ranking_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.get_ranking_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.get_ranking_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters based on which the chromosome is evaluated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of ranking param values</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.get_route_predecessors">
+<code class="descname">get_route_predecessors</code><span class="sig-paren">(</span><em>route</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.get_route_predecessors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.get_route_predecessors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets predecessors of a node in based on a route ordering.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>route</strong> (<em>list</em>) – a route</li>
+<li><strong>index</strong> (<em>int</em>) – node index in a route</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">node route predecessors</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.get_route_successors">
+<code class="descname">get_route_successors</code><span class="sig-paren">(</span><em>route</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.get_route_successors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.get_route_successors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets successors of a node in based on a route ordering.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>route</strong> (<em>list</em>) – a route</li>
+<li><strong>index</strong> (<em>int</em>) – node index in a route</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">node route successors</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.init_problem_params">
+<code class="descname">init_problem_params</code><span class="sig-paren">(</span><em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.init_problem_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.init_problem_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize CBM problem parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params=None</strong> (<em>dictionary</em>) – algorithm parameters (problem variant and criteria)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.initialize_schedule">
+<code class="descname">initialize_schedule</code><span class="sig-paren">(</span><em>duration</em>, <em>setup_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.initialize_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.initialize_schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize solution schedule.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.insertion_minimal_cost">
+<code class="descname">insertion_minimal_cost</code><span class="sig-paren">(</span><em>node</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.insertion_minimal_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.insertion_minimal_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert node in the chromosome in the location with minimal cost.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<em>int</em>) – node id</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.makespan">
+<code class="descname">makespan</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.makespan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.makespan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get makespan of the calculated plan (considering all routes
+of all vehicles).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">total solution makespan</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>mdvrp</em>, <em>plot=True</em>, <em>save=False</em>, <em>figpath=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mdvrp</strong> (<a class="reference internal" href="#cbm_pop_lib.common.mdvrp.MDVRP" title="cbm_pop_lib.common.mdvrp.MDVRP"><em>MDVRP</em></a>) – MDVRP problem instance</li>
+<li><strong>plot=True</strong> (<em>bool</em><em>, </em><em>optional</em>) – display plot figure</li>
+<li><strong>save=False</strong> (<em>bool</em><em>, </em><em>optional</em>) – save the figure</li>
+<li><strong>figpath=&quot;&quot;</strong> (<em>str</em><em>, </em><em>optional</em>) – if save, location of file</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.remove_node">
+<code class="descname">remove_node</code><span class="sig-paren">(</span><em>vehicle</em>, <em>route</em>, <em>removal_index</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.remove_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.remove_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the node from route.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>route</strong> (<em>int</em>) – route id</li>
+<li><strong>removal_index</strong> (<em>int</em>) – removal index within the route</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.remove_nodes">
+<code class="descname">remove_nodes</code><span class="sig-paren">(</span><em>nodes</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.remove_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.remove_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove nodes from the chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (<em>int list</em>) – a list of node ids</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix for all vehicles</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.update_all_prec_insertion">
+<code class="descname">update_all_prec_insertion</code><span class="sig-paren">(</span><em>route</em>, <em>node</em>, <em>insertion_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.update_all_prec_insertion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.update_all_prec_insertion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update all precedence constraints based on the inserted node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>r</strong> (<em>list</em>) – route</li>
+<li><strong>node</strong> (<em>int</em>) – node id</li>
+<li><strong>insertion_index</strong> (<em>int</em>) – insertion index</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.update_all_prec_removal">
+<code class="descname">update_all_prec_removal</code><span class="sig-paren">(</span><em>route</em>, <em>removal_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.update_all_prec_removal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.update_all_prec_removal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update all precedence constraints based on the removed node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>route</strong> (<em>list</em>) – route</li>
+<li><strong>removal_index</strong> (<em>int</em>) – index of the removed node</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.chromosome.Chromosome.update_successor_EST">
+<code class="descname">update_successor_EST</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/chromosome.html#Chromosome.update_successor_EST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.chromosome.Chromosome.update_successor_EST" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update earliest start times for all successors of the node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node</strong> (<em>int</em>) – node id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cbm_pop_lib.common.mdvrp">
+<span id="cbm-pop-lib-common-mdvrp-module"></span><span id="mdvrp"></span><h3>cbm_pop_lib.common.mdvrp module<a class="headerlink" href="#module-cbm_pop_lib.common.mdvrp" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP">
+<em class="property">class </em><code class="descname">MDVRP</code><span class="sig-paren">(</span><em>k</em>, <em>n</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#MDVRP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>TODO finish this
+Description of MDVRP</p>
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.n">
+<code class="descname">n</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.n" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.m">
+<code class="descname">m</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.m" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.k">
+<code class="descname">k</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.k" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.depot_vehicles">
+<code class="descname">depot_vehicles</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.depot_vehicles" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.depot_labels">
+<code class="descname">depot_labels</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.depot_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.vehicle_labels">
+<code class="descname">vehicle_labels</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.vehicle_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.customer_labels">
+<code class="descname">customer_labels</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.customer_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.nodes">
+<code class="descname">nodes</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.vehicles">
+<code class="descname">vehicles</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.vehicles" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em></p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>k</strong> (<em>undefined</em>) – </li>
+<li><strong>n</strong> (<em>undefined</em>) – </li>
+<li><strong>m</strong> (<em>undefined</em>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.add_precedence_constraint">
+<code class="descname">add_precedence_constraint</code><span class="sig-paren">(</span><em>pred</em>, <em>succ</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#MDVRP.add_precedence_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.add_precedence_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a precedence constraint to the structure</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pred</strong> (<em>int</em>) – customer label</li>
+<li><strong>succ</strong> (<em>int</em>) – customer label</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#MDVRP.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw MDVRP problem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.draw_clusters">
+<code class="descname">draw_clusters</code><span class="sig-paren">(</span><em>customers</em>, <em>candidate_depots</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#MDVRP.draw_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.draw_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw grouping of customers and their candidate depots.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>customers</strong> (<em>list</em>) – customer id list</li>
+<li><strong>candidate_depots</strong> (<em>dictionary</em>) – candidate depots for each customer</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.input_precedece_constraints">
+<code class="descname">input_precedece_constraints</code><span class="sig-paren">(</span><em>constraints</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#MDVRP.input_precedece_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.input_precedece_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input precedence constraints into the structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>constraints</strong> (<em>list</em>) – [[pred1, succ1], ..]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.load_precedence_constraints">
+<code class="descname">load_precedence_constraints</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#MDVRP.load_precedence_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.load_precedence_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load precedence constraints from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath</strong> (<em>string</em>) – path to file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.common.mdvrp.MDVRP.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#MDVRP.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.MDVRP.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot MDVRP problem.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cbm_pop_lib.common.mdvrp.Node">
+<em class="property">class </em><code class="descname">Node</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>t</em>, <em>z=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Description of static Node class.</p>
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.Node.position">
+<code class="descname">position</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.Node.position" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – [x, y, z] position of node</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.Node.type">
+<code class="descname">type</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.Node.type" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>string</em> – type = (“customer”, “depot”)</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>float</em>) – node x position</li>
+<li><strong>y</strong> (<em>float</em>) – node y position</li>
+<li><strong>t</strong> (<em>string</em>) – node type</li>
+<li><strong>z=0</strong> (<em>float</em>) – node z position</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="cbm_pop_lib.common.mdvrp.Vehicle">
+<em class="property">class </em><code class="descname">Vehicle</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z=0</em>, <em>depot=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/common/mdvrp.html#Vehicle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.Vehicle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Description of Vehicle class.</p>
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.Vehicle.position">
+<code class="descname">position</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.Vehicle.position" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – [x, y, z] position of vehicle</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cbm_pop_lib.common.mdvrp.Vehicle.depot">
+<code class="descname">depot</code><a class="headerlink" href="#cbm_pop_lib.common.mdvrp.Vehicle.depot" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>string</em> – depot label</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>float</em>) – vehicle x position</li>
+<li><strong>y</strong> (<em>float</em>) – vehicle y position</li>
+<li><strong>z=0</strong> (<em>float</em>) – vehicle z position</li>
+<li><strong>depot=&quot;&quot;</strong> (<em>string</em>) – depot label</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cbm_pop_lib</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cbm_pop_lib.html">cbm_pop_lib package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">cbm_pop_lib</a><ul>
+  <li><a href="cbm_pop_lib.html">cbm_pop_lib package</a><ul>
+      <li>Previous: <a href="cbm_pop_lib.aux.html" title="previous chapter">cbm_pop_lib.aux package</a></li>
+      <li>Next: <a href="cbm_pop_lib.cordeau_parser.html" title="next chapter">cbm_pop_lib.cordeau_parser package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/cbm_pop_lib.common.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

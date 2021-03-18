@@ -1,0 +1,402 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cbm_pop_lib.operators package &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cbm_pop_agent_node" href="cbm_pop_agent_node.html" />
+    <link rel="prev" title="cbm_pop_lib.cordeau_parser package" href="cbm_pop_lib.cordeau_parser.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cbm-pop-lib-operators-package">
+<h1>cbm_pop_lib.operators package<a class="headerlink" href="#cbm-pop-lib-operators-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-cbm_pop_lib.operators.auxiliary_functions">
+<span id="cbm-pop-lib-operators-auxiliary-functions-module"></span><h3>cbm_pop_lib.operators.auxiliary_functions module<a class="headerlink" href="#module-cbm_pop_lib.operators.auxiliary_functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="cbm_pop_lib.operators.auxiliary_functions.best_solution_index">
+<code class="descname">best_solution_index</code><span class="sig-paren">(</span><em>compare</em>, <em>fitness</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/auxiliary_functions.html#best_solution_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.auxiliary_functions.best_solution_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.auxiliary_functions.calc_borderline_customers">
+<code class="descname">calc_borderline_customers</code><span class="sig-paren">(</span><em>vehicles_per_depot</em>, <em>setup</em>, <em>tolerance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/auxiliary_functions.html#calc_borderline_customers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.auxiliary_functions.calc_borderline_customers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.auxiliary_functions.find_node_route">
+<code class="descname">find_node_route</code><span class="sig-paren">(</span><em>chromosome</em>, <em>node1</em>, <em>vehicles_per_depot=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/auxiliary_functions.html#find_node_route"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.auxiliary_functions.find_node_route" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.auxiliary_functions.pareto_ranking_procedure_eval">
+<code class="descname">pareto_ranking_procedure_eval</code><span class="sig-paren">(</span><em>population</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/auxiliary_functions.html#pareto_ranking_procedure_eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.auxiliary_functions.pareto_ranking_procedure_eval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.auxiliary_functions.roulette_wheel">
+<code class="descname">roulette_wheel</code><span class="sig-paren">(</span><em>fitness</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/auxiliary_functions.html#roulette_wheel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.auxiliary_functions.roulette_wheel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cbm_pop_lib.operators.generational_functions">
+<span id="cbm-pop-lib-operators-generational-functions-module"></span><h3>cbm_pop_lib.operators.generational_functions module<a class="headerlink" href="#module-cbm_pop_lib.operators.generational_functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="cbm_pop_lib.operators.generational_functions.greedy_insertion">
+<code class="descname">greedy_insertion</code><span class="sig-paren">(</span><em>mdvrp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/generational_functions.html#greedy_insertion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.generational_functions.greedy_insertion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gradually builds the routes by selecting randomly an unserved customer
+and by inserting it at minimum cost in existing routes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">MDVRP problem instance</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.mdvrp.MDVRP" title="cbm_pop_lib.common.mdvrp.MDVRP">MDVRP</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.generational_functions.init_result">
+<code class="descname">init_result</code><span class="sig-paren">(</span><em>tasks</em>, <em>mdvrp</em>, <em>prec</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/generational_functions.html#init_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.generational_functions.init_result" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.generational_functions.node_predecessors">
+<code class="descname">node_predecessors</code><span class="sig-paren">(</span><em>node</em>, <em>prec</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/generational_functions.html#node_predecessors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.generational_functions.node_predecessors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.generational_functions.node_successors">
+<code class="descname">node_successors</code><span class="sig-paren">(</span><em>node</em>, <em>prec</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/generational_functions.html#node_successors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.generational_functions.node_successors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cbm_pop_lib.operators.genetic_operators">
+<span id="cbm-pop-lib-operators-genetic-operators-module"></span><h3>cbm_pop_lib.operators.genetic_operators module<a class="headerlink" href="#module-cbm_pop_lib.operators.genetic_operators" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.calc_insertion_reduce_idle">
+<code class="descname">calc_insertion_reduce_idle</code><span class="sig-paren">(</span><em>p1</em>, <em>v</em>, <em>r</em>, <em>candidate</em>, <em>i</em>, <em>limit_low</em>, <em>limit_up</em>, <em>idle_slot</em>, <em>duration</em>, <em>setup_time</em>, <em>setup_cost</em>, <em>demand</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#calc_insertion_reduce_idle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.calc_insertion_reduce_idle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.crossover_bcrc">
+<code class="descname">crossover_bcrc</code><span class="sig-paren">(</span><em>vehicle_candidates</em>, <em>p1</em>, <em>p2</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#crossover_bcrc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.crossover_bcrc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Best cost route crossover.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>depot</strong> (<em>int</em>) – depot id</li>
+<li><strong>depot_vehicles</strong> (<em>dict</em>) – key= depot ids, value= list of vehicles</li>
+<li><strong>p1</strong> (<a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome"><em>Chromosome</em></a>) – first parent</li>
+<li><strong>p2</strong> (<a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome"><em>Chromosome</em></a>) – second parent</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix for all vehicles</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">two generated offsprings</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Chromosome list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.get_swap_candidates">
+<code class="descname">get_swap_candidates</code><span class="sig-paren">(</span><em>p1</em>, <em>d1</em>, <em>v1</em>, <em>n1</em>, <em>borderline_customers</em>, <em>candidate_depots</em>, <em>depot_vehicles</em>, <em>demand</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#get_swap_candidates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.get_swap_candidates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get candidate nodes for inter route swap with the node1 currently
+assigned to the vehicle v1 from the depot d1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p1</strong> (<a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome"><em>Chromosome</em></a>) – parent chromosome</li>
+<li><strong>d1</strong> (<em>int</em>) – depot id</li>
+<li><strong>v1</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>node1</strong> (<em>int</em>) – node1 id</li>
+<li><strong>borderline_customers</strong> (<em>int list</em>) – candidate nodes for swap</li>
+<li><strong>candidate_depots</strong> (<em>dict</em>) – key= node id, value= a list of possible depots</li>
+<li><strong>depot_vehicles</strong> (<em>dict</em>) – key= depot id, value= a list of vehicles at the depot</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">[description]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">two lists</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.mutation_inter_depot_swapping">
+<code class="descname">mutation_inter_depot_swapping</code><span class="sig-paren">(</span><em>p1</em>, <em>depot_vehicles</em>, <em>borderline_customers</em>, <em>candidate_depots</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#mutation_inter_depot_swapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.mutation_inter_depot_swapping" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.mutation_intra_depot_reversal">
+<code class="descname">mutation_intra_depot_reversal</code><span class="sig-paren">(</span><em>p1</em>, <em>vehicle</em>, <em>duration</em>, <em>setup_time</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#mutation_intra_depot_reversal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.mutation_intra_depot_reversal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intra depot reversal mutation. Two cutpoints are selected in the
+chromosome associated with the depot, and the genetic material between
+these two cutpoints is reversed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p1</strong> (<a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome"><em>Chromosome</em></a>) – parent chromosome</li>
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">generated offspring</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome">Chromosome</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.mutation_intra_depot_swapping">
+<code class="descname">mutation_intra_depot_swapping</code><span class="sig-paren">(</span><em>p1</em>, <em>depot</em>, <em>depot_vehicles</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#mutation_intra_depot_swapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.mutation_intra_depot_swapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>This simple mutation operator selects two random routes and swaps one
+randomly chosen customer from one route to another.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p1</strong> (<a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome"><em>Chromosome</em></a>) – parent chromosome</li>
+<li><strong>depot</strong> (<em>int</em>) – depot id</li>
+<li><strong>depot_vehicles</strong> (<em>int list</em>) – a list of vehicles at the depot</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix for all vehicles</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">generated offspring</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome">Chromosome</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.mutation_single_customer_rerouting">
+<code class="descname">mutation_single_customer_rerouting</code><span class="sig-paren">(</span><em>vehicle</em>, <em>p1</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>setup_cost</em>, <em>demand</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#mutation_single_customer_rerouting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.mutation_single_customer_rerouting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-routing involves randomly selecting one customer, and removing that
+customer from the existing route. The customer is then inserted in the
+best feasible insertion location within the entire chromosome.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.one_move">
+<code class="descname">one_move</code><span class="sig-paren">(</span><em>p1</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#one_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.one_move" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.one_move_reduce_idle">
+<code class="descname">one_move_reduce_idle</code><span class="sig-paren">(</span><em>mdvrp</em>, <em>p1</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>setup_cost</em>, <em>demand</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#one_move_reduce_idle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.one_move_reduce_idle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.reverse_nodes">
+<code class="descname">reverse_nodes</code><span class="sig-paren">(</span><em>p</em>, <em>vehicle</em>, <em>cut1</em>, <em>cut2</em>, <em>duration</em>, <em>setup_time</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#reverse_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.reverse_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse nodes between two setpoints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p</strong> (<a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome"><em>Chromosome</em></a>) – parent</li>
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>cut1</strong> (<em>int</em>) – first cut index (enters reversion)</li>
+<li><strong>cut2</strong> (<em>int</em>) – second cut index (excluded for the reversion)</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">generated offspring</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome">Chromosome</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.swap_nodes">
+<code class="descname">swap_nodes</code><span class="sig-paren">(</span><em>p</em>, <em>v1</em>, <em>r1</em>, <em>n1_index</em>, <em>v2</em>, <em>r2</em>, <em>n2_index</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#swap_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.swap_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Swap two nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p</strong> (<a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome"><em>Chromosome</em></a>) – parent chromosome</li>
+<li><strong>v1</strong> (<em>int</em>) – first vehicle id</li>
+<li><strong>r1</strong> (<em>int</em>) – first route index</li>
+<li><strong>n1_index</strong> (<em>int</em>) – first node index</li>
+<li><strong>v2</strong> (<em>int</em>) – second vehicle id</li>
+<li><strong>r2</strong> (<em>int</em>) – second route index</li>
+<li><strong>n2_index</strong> (<em>int</em>) – second node index</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix for all vehicles</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">generated offspring</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome">Chromosome</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.two_opt">
+<code class="descname">two_opt</code><span class="sig-paren">(</span><em>p1</em>, <em>duration</em>, <em>setup_time</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#two_opt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.two_opt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.two_opt_route">
+<code class="descname">two_opt_route</code><span class="sig-paren">(</span><em>p1</em>, <em>vehicle</em>, <em>route</em>, <em>duration</em>, <em>setup_time</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#two_opt_route"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.two_opt_route" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cbm_pop_lib.operators.genetic_operators.two_swap">
+<code class="descname">two_swap</code><span class="sig-paren">(</span><em>p1</em>, <em>depot_vehicles</em>, <em>borderline_customers</em>, <em>candidate_depots</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/operators/genetic_operators.html#two_swap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.operators.genetic_operators.two_swap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cbm_pop_lib</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cbm_pop_lib.html">cbm_pop_lib package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">cbm_pop_lib</a><ul>
+  <li><a href="cbm_pop_lib.html">cbm_pop_lib package</a><ul>
+      <li>Previous: <a href="cbm_pop_lib.cordeau_parser.html" title="previous chapter">cbm_pop_lib.cordeau_parser package</a></li>
+      <li>Next: <a href="cbm_pop_agent_node.html" title="next chapter">cbm_pop_agent_node</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/cbm_pop_lib.operators.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

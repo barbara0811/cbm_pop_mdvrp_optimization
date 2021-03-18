@@ -1,0 +1,689 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>operators.genetic_operators &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for operators.genetic_operators</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">cbm_pop_lib.operators.auxiliary_functions</span> <span class="k">as</span> <span class="nn">aux</span>
+<span class="kn">from</span> <span class="nn">cbm_pop_lib.common</span> <span class="kn">import</span> <span class="n">cbm_alg_properties</span> <span class="k">as</span> <span class="n">prop</span>
+
+
+<span class="c1"># Crossover</span>
+
+<div class="viewcode-block" id="crossover_bcrc"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.crossover_bcrc">[docs]</a><span class="k">def</span> <span class="nf">crossover_bcrc</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+                   <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Best cost route crossover.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        depot (int): depot id</span>
+<span class="sd">        depot_vehicles (dict): key= depot ids, value= list of vehicles</span>
+<span class="sd">        p1 (Chromosome): first parent</span>
+<span class="sd">        p2 (Chromosome): second parent</span>
+<span class="sd">        quality (np.matrix): quality matrix for all vehicles</span>
+<span class="sd">        duration (np.matrix): duration matrix for all vehicles</span>
+<span class="sd">        setup_time (np.matrix): setup time matrix for all vehicles</span>
+<span class="sd">        demand (np.matrix): demand matrix for all vehicles</span>
+<span class="sd">        setup_cost (np.matrix): setup cost matrix for all vehicles</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Chromosome list: two generated offsprings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># offsprings</span>
+    <span class="n">o1</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">o2</span> <span class="o">=</span> <span class="n">p2</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+    <span class="c1"># select a random route from p1 and p2</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">)</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v1</span><span class="p">]))</span>
+
+    <span class="n">v2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">)</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v2</span><span class="p">]))</span>
+
+    <span class="c1"># check for decomposition compatibility</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">all_customers</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">all_customers</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">]</span>
+    <span class="c1"># remove nodes in r2 from o1 and nodes in r1 from o2</span>
+    <span class="n">o1</span><span class="o">.</span><span class="n">remove_nodes</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">)</span>
+    <span class="n">o2</span><span class="o">.</span><span class="n">remove_nodes</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">)</span>
+
+    <span class="c1"># insert nodes from r2 into routes of o1 (with best insertion cost)</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+        <span class="n">o1</span><span class="o">.</span><span class="n">insertion_minimal_cost</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span>
+                                  <span class="n">setup_cost</span><span class="p">)</span>
+        <span class="n">r2</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="c1"># insert nodes from r1 into routes of o2 (with best insertion cost)</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span>
+        <span class="n">o2</span><span class="o">.</span><span class="n">insertion_minimal_cost</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span>
+                                  <span class="n">setup_cost</span><span class="p">)</span>
+        <span class="n">r1</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">o1</span><span class="p">,</span> <span class="n">o2</span><span class="p">]</span></div>
+
+
+<span class="c1"># Mutation</span>
+
+<div class="viewcode-block" id="reverse_nodes"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.reverse_nodes">[docs]</a><span class="k">def</span> <span class="nf">reverse_nodes</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">vehicle</span><span class="p">,</span> <span class="n">cut1</span><span class="p">,</span> <span class="n">cut2</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reverse nodes between two setpoints.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p (Chromosome): parent</span>
+<span class="sd">        vehicle (int): vehicle id</span>
+<span class="sd">        cut1 (int): first cut index (enters reversion)</span>
+<span class="sd">        cut2 (int): second cut index (excluded for the reversion)</span>
+<span class="sd">        duration (np.matrix): duration matrix for all vehicles</span>
+<span class="sd">        setup_time (np.matrix): setup time matrix for all vehicles</span>
+<span class="sd">        setup_cost (np.matrix): setup cost matrix for all vehicles</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Chromosome: generated offspring</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p_res</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">customers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cuts</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">])):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cut1</span> <span class="o">&gt;=</span> <span class="n">ind</span> <span class="ow">and</span> <span class="n">cut1</span> <span class="o">&lt;</span> <span class="n">ind</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="ow">and</span>
+                <span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cut1</span> <span class="o">-</span> <span class="n">ind</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cut2</span> <span class="o">&gt;=</span> <span class="n">ind</span> <span class="ow">and</span> <span class="n">cut2</span> <span class="o">&lt;</span> <span class="n">ind</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">and</span>
+                <span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cut2</span> <span class="o">-</span> <span class="n">ind</span>
+        <span class="n">ind</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">customers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]:])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">customers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span><span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="k">elif</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+            <span class="n">customers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">][:</span><span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span>
+
+    <span class="n">customers</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="n">constrained</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">prec_constraints</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+    <span class="n">customers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">customers</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constrained</span><span class="p">]</span>
+
+    <span class="n">cost_diff</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">upper_limit</span> <span class="o">=</span> <span class="n">cuts</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upper_limit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">old_route</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">upper_limit</span><span class="p">:</span>
+            <span class="n">old_node</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">old_node</span> <span class="ow">in</span> <span class="n">constrained</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="n">new_node</span> <span class="o">=</span> <span class="n">customers</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+            <span class="c1"># prev node</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">old_prev_node</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">prev_node</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">old_prev_node</span> <span class="o">=</span> <span class="n">old_route</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">prev_node</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># bond with previous node</span>
+            <span class="n">cost_diff</span> <span class="o">+=</span> <span class="p">(</span><span class="n">setup_cost</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">prev_node</span><span class="p">][</span><span class="n">new_node</span><span class="p">]</span> <span class="o">-</span>
+                          <span class="n">setup_cost</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">old_prev_node</span><span class="p">][</span><span class="n">old_node</span><span class="p">])</span>
+            <span class="c1"># check if the procedure is finishing</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">upper_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">upper_limit</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">]):</span>
+                    <span class="n">next_node</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">next_node</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="c1"># if classic vrp --&gt; count return to depot</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">next_node</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p_res</span><span class="o">.</span><span class="n">problem_variant</span> <span class="o">==</span> <span class="n">prop</span><span class="o">.</span><span class="n">problem_variants</span><span class="o">.</span><span class="n">CLASSIC</span><span class="p">):</span>
+                    <span class="n">cost_diff</span> <span class="o">+=</span> <span class="p">(</span><span class="n">setup_cost</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">new_node</span><span class="p">][</span><span class="n">next_node</span><span class="p">]</span> <span class="o">-</span>
+                                  <span class="n">setup_cost</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">old_node</span><span class="p">][</span><span class="n">next_node</span><span class="p">])</span>
+            <span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
+            <span class="n">ind</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># update cost</span>
+    <span class="n">p_res</span><span class="o">.</span><span class="n">total_cost</span> <span class="o">+=</span> <span class="n">cost_diff</span>
+    <span class="n">p_res</span><span class="o">.</span><span class="n">capacity</span><span class="p">[</span><span class="n">vehicle</span><span class="p">]</span> <span class="o">-=</span> <span class="n">cost_diff</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">p_res</span><span class="o">.</span><span class="n">capacity</span><span class="p">[</span><span class="n">vehicle</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">success</span><span class="p">,</span> <span class="n">p_res</span><span class="p">]</span></div>
+
+
+<span class="n">swap_succ</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">swap_fail</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<div class="viewcode-block" id="swap_nodes"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.swap_nodes">[docs]</a><span class="k">def</span> <span class="nf">swap_nodes</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">n1_index</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">n2_index</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+               <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Swap two nodes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p (Chromosome): parent chromosome</span>
+<span class="sd">        v1 (int): first vehicle id</span>
+<span class="sd">        r1 (int): first route index</span>
+<span class="sd">        n1_index (int): first node index</span>
+<span class="sd">        v2 (int): second vehicle id</span>
+<span class="sd">        r2 (int): second route index</span>
+<span class="sd">        n2_index (int): second node index</span>
+<span class="sd">        quality (np.matrix): quality matrix for all vehicles</span>
+<span class="sd">        duration (np.matrix): duration matrix for all vehicles</span>
+<span class="sd">        setup_time (np.matrix): setup time matrix for all vehicles</span>
+<span class="sd">        demand (np.matrix): demand matrix for all vehicles</span>
+<span class="sd">        setup_cost (np.matrix): setup cost matrix for all vehicles</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Chromosome: generated offspring</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">route1</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v1</span><span class="p">][</span><span class="n">r1</span><span class="p">]</span>
+    <span class="n">node1</span> <span class="o">=</span> <span class="n">route1</span><span class="p">[</span><span class="n">n1_index</span><span class="p">]</span>
+    <span class="n">route2</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v2</span><span class="p">][</span><span class="n">r2</span><span class="p">]</span>
+    <span class="n">node2</span> <span class="o">=</span> <span class="n">route2</span><span class="p">[</span><span class="n">n2_index</span><span class="p">]</span>
+
+    <span class="n">p_res</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">old_cost</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">total_cost</span>
+    <span class="c1"># remove node1 from (v1,r1) and put node2 in the spot</span>
+    <span class="c1"># remove node2 from (v2,r2) and put node1 in the spot</span>
+    <span class="n">p_res</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">n1_index</span><span class="p">,</span> <span class="n">quality</span><span class="p">[</span><span class="n">v1</span><span class="p">],</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span>
+                      <span class="n">demand</span><span class="p">[</span><span class="n">v1</span><span class="p">],</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v1</span><span class="p">])</span>
+    <span class="n">p_res</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">n2_index</span><span class="p">,</span> <span class="n">quality</span><span class="p">[</span><span class="n">v2</span><span class="p">],</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span>
+                      <span class="n">demand</span><span class="p">[</span><span class="n">v2</span><span class="p">],</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v2</span><span class="p">])</span>
+    <span class="c1"># insert node2 in route1 in n1_index</span>
+    <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">calc_possible_insertions</span><span class="p">(</span><span class="n">route1</span><span class="p">,</span> <span class="n">node2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n1_index</span> <span class="o">&gt;=</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">n1_index</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">p_res</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node2</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">n1_index</span><span class="p">,</span> <span class="n">quality</span><span class="p">[</span><span class="n">v1</span><span class="p">],</span> <span class="n">duration</span><span class="p">,</span>
+                              <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">[</span><span class="n">v1</span><span class="p">],</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v1</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># insert node1 in route2 in n1_index</span>
+    <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">calc_possible_insertions</span><span class="p">(</span><span class="n">route2</span><span class="p">,</span> <span class="n">node1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n2_index</span> <span class="o">&gt;=</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">n2_index</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">p_res</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">n2_index</span><span class="p">,</span> <span class="n">quality</span><span class="p">[</span><span class="n">v2</span><span class="p">],</span> <span class="n">duration</span><span class="p">,</span>
+                              <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">[</span><span class="n">v2</span><span class="p">],</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v2</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="n">p_res</span><span class="p">,</span> <span class="n">p_res</span><span class="o">.</span><span class="n">total_cost</span> <span class="o">-</span> <span class="n">old_cost</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="mutation_intra_depot_reversal"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.mutation_intra_depot_reversal">[docs]</a><span class="k">def</span> <span class="nf">mutation_intra_depot_reversal</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">vehicle</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span>
+                                  <span class="n">setup_cost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Intra depot reversal mutation. Two cutpoints are selected in the</span>
+<span class="sd">    chromosome associated with the depot, and the genetic material between</span>
+<span class="sd">    these two cutpoints is reversed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p1 (Chromosome): parent chromosome</span>
+<span class="sd">        vehicle (int): vehicle id</span>
+<span class="sd">        duration (np.matrix): duration matrix for all vehicles</span>
+<span class="sd">        setup_time (np.matrix): setup time matrix for all vehicles</span>
+<span class="sd">        setup_cost (np.matrix): setup cost matrix for all vehicles</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Chromosome: generated offspring</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">customers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">]:</span>
+        <span class="n">customers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">customers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p1</span>
+    <span class="c1"># cut1 -- first element that gets into inversion list</span>
+    <span class="c1"># cut2 -- first element after inversion list that doesn&#39;t get into</span>
+    <span class="c1">#         inversion list</span>
+    <span class="n">cut1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">customers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cut1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">customers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">cut2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">customers</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cut2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">cut1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">customers</span><span class="p">))</span>
+
+    <span class="p">[</span><span class="n">success</span><span class="p">,</span> <span class="n">p_res</span><span class="p">]</span> <span class="o">=</span> <span class="n">reverse_nodes</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">vehicle</span><span class="p">,</span> <span class="n">cut1</span><span class="p">,</span> <span class="n">cut2</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span>
+                                     <span class="n">setup_cost</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p1</span>
+    <span class="k">return</span> <span class="n">p_res</span></div>
+
+
+<div class="viewcode-block" id="mutation_intra_depot_swapping"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.mutation_intra_depot_swapping">[docs]</a><span class="k">def</span> <span class="nf">mutation_intra_depot_swapping</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">depot</span><span class="p">,</span> <span class="n">depot_vehicles</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+                                  <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This simple mutation operator selects two random routes and swaps one</span>
+<span class="sd">    randomly chosen customer from one route to another.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p1 (Chromosome): parent chromosome</span>
+<span class="sd">        depot (int): depot id</span>
+<span class="sd">        depot_vehicles (int list): a list of vehicles at the depot</span>
+<span class="sd">        quality (np.matrix): quality matrix for all vehicles</span>
+<span class="sd">        duration (np.matrix): duration matrix for all vehicles</span>
+<span class="sd">        setup_time (np.matrix): setup time matrix for all vehicles</span>
+<span class="sd">        demand (np.matrix): demand matrix for all vehicles</span>
+<span class="sd">        setup_cost (np.matrix): setup cost matrix for all vehicles</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Chromosome: generated offspring</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># list feasible vehicles</span>
+    <span class="n">vehicle_candidates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">depot_vehicles</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="n">vehicle_candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="c1"># select two vehicles</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p1</span>
+
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">)</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">v2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">)</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">v1</span> <span class="o">==</span> <span class="n">v2</span> <span class="ow">and</span> <span class="n">r1</span> <span class="o">==</span> <span class="n">r2</span><span class="p">:</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">)</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">n1_index</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v1</span><span class="p">][</span><span class="n">r1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">n2_index</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v2</span><span class="p">][</span><span class="n">r2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="p">[</span><span class="n">success</span><span class="p">,</span> <span class="n">p_res</span><span class="p">,</span> <span class="n">cost</span><span class="p">]</span> <span class="o">=</span> <span class="n">swap_nodes</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">n1_index</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">n2_index</span><span class="p">,</span>
+                                        <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span>
+                                        <span class="n">setup_cost</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p_res</span></div>
+
+
+<div class="viewcode-block" id="get_swap_candidates"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.get_swap_candidates">[docs]</a><span class="k">def</span> <span class="nf">get_swap_candidates</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">borderline_customers</span><span class="p">,</span>
+                        <span class="n">candidate_depots</span><span class="p">,</span> <span class="n">depot_vehicles</span><span class="p">,</span> <span class="n">demand</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get candidate nodes for inter route swap with the node1 currently</span>
+<span class="sd">    assigned to the vehicle v1 from the depot d1.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p1 (Chromosome): parent chromosome</span>
+<span class="sd">        d1 (int): depot id</span>
+<span class="sd">        v1 (int): vehicle id</span>
+<span class="sd">        node1 (int): node1 id</span>
+<span class="sd">        borderline_customers (int list): candidate nodes for swap</span>
+<span class="sd">        candidate_depots (dict): key= node id, value= a list of possible depots</span>
+<span class="sd">        depot_vehicles (dict): key= depot id, value= a list of vehicles at the depot</span>
+<span class="sd">        demand (np.matrix): demand matrix for all vehicles</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        two lists: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">candidate_vehicles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n2</span> <span class="ow">in</span> <span class="n">borderline_customers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">candidate_depots</span><span class="p">[</span><span class="n">n1</span><span class="p">])</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">candidate_depots</span><span class="p">[</span><span class="n">n2</span><span class="p">]))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># find a route where this node is</span>
+            <span class="k">for</span> <span class="n">depot</span> <span class="ow">in</span> <span class="n">candidate_depots</span><span class="p">[</span><span class="n">n2</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">depot</span> <span class="o">==</span> <span class="n">d1</span><span class="p">:</span>
+                    <span class="k">break</span>  <span class="c1"># this is no longer a candidate (same depot node)</span>
+                <span class="k">for</span> <span class="n">v2</span> <span class="ow">in</span> <span class="n">depot_vehicles</span><span class="p">[</span><span class="n">depot</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">n2</span> <span class="ow">in</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v2</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
+                        <span class="n">candidate_vehicles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">candidates</span><span class="p">,</span> <span class="n">candidate_vehicles</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="mutation_inter_depot_swapping"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.mutation_inter_depot_swapping">[docs]</a><span class="k">def</span> <span class="nf">mutation_inter_depot_swapping</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">depot_vehicles</span><span class="p">,</span> <span class="n">borderline_customers</span><span class="p">,</span>
+                                  <span class="n">candidate_depots</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+                                  <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">borderline_customers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p1</span>
+
+    <span class="c1"># select node 1</span>
+    <span class="n">node1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">borderline_customers</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">node1</span> <span class="ow">in</span> <span class="n">p1</span><span class="o">.</span><span class="n">unserved_customers</span><span class="p">:</span>
+        <span class="n">node1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">borderline_customers</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">d1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">n1_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">find_node_route</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">node1</span><span class="p">,</span>
+                                                 <span class="nb">len</span><span class="p">(</span><span class="n">depot_vehicles</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="p">[</span><span class="n">swap_candidates</span><span class="p">,</span> <span class="n">swap_candidate_vehicles</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_swap_candidates</span><span class="p">(</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">node1</span><span class="p">,</span> <span class="n">borderline_customers</span><span class="p">,</span> <span class="n">candidate_depots</span><span class="p">,</span>
+        <span class="n">depot_vehicles</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span>
+
+    <span class="c1"># select node 2</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">swap_candidates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">n2_choice</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">swap_candidates</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">node2</span> <span class="o">=</span> <span class="n">swap_candidates</span><span class="p">[</span><span class="n">n2_choice</span><span class="p">]</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">swap_candidate_vehicles</span><span class="p">[</span><span class="n">n2_choice</span><span class="p">]</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n2_index</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v2</span><span class="p">][</span><span class="n">r2</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">node2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p1</span>
+
+    <span class="p">[</span><span class="n">success</span><span class="p">,</span> <span class="n">p_res</span><span class="p">,</span> <span class="n">cost</span><span class="p">]</span> <span class="o">=</span> <span class="n">swap_nodes</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">n1_index</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">n2_index</span><span class="p">,</span>
+                                        <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span>
+                                        <span class="n">setup_cost</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p_res</span></div>
+
+
+<div class="viewcode-block" id="mutation_single_customer_rerouting"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.mutation_single_customer_rerouting">[docs]</a><span class="k">def</span> <span class="nf">mutation_single_customer_rerouting</span><span class="p">(</span><span class="n">vehicle</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+                                       <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">,</span> <span class="n">demand</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Re-routing involves randomly selecting one customer, and removing that</span>
+<span class="sd">    customer from the existing route. The customer is then inserted in the</span>
+<span class="sd">    best feasible insertion location within the entire chromosome.</span>
+<span class="sd">    Input:</span>
+<span class="sd">        depot -- depot to which operator is applied</span>
+<span class="sd">        p1 -- parent chromosome</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">route</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">route</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p1</span>
+    <span class="n">removal_index</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">route</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">route</span><span class="p">][</span><span class="n">removal_index</span><span class="p">]</span>
+
+    <span class="n">p_res</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="c1"># remove customer from chromosome</span>
+    <span class="n">p_res</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">vehicle</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">removal_index</span><span class="p">,</span> <span class="n">quality</span><span class="p">[</span><span class="n">vehicle</span><span class="p">],</span>
+                      <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">[</span><span class="n">vehicle</span><span class="p">],</span>
+                      <span class="n">setup_cost</span><span class="p">[</span><span class="n">vehicle</span><span class="p">])</span>
+
+    <span class="c1"># insert customer at best insert location</span>
+    <span class="k">if</span> <span class="n">p_res</span><span class="o">.</span><span class="n">insertion_minimal_cost</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span>
+                                    <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">p_res</span>
+    <span class="k">return</span> <span class="n">p1</span></div>
+
+
+<span class="c1">############################</span>
+<span class="c1"># Local search algorithms  #</span>
+<span class="c1">############################</span>
+
+<div class="viewcode-block" id="two_opt"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.two_opt">[docs]</a><span class="k">def</span> <span class="nf">two_opt</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">])):</span>
+            <span class="n">two_opt_route</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">p1</span></div>
+
+
+<div class="viewcode-block" id="two_opt_route"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.two_opt_route">[docs]</a><span class="k">def</span> <span class="nf">two_opt_route</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">vehicle</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">route</span><span class="p">]</span>
+    <span class="n">nochange</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">maxIter</span> <span class="o">=</span> <span class="mi">50</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">nochange</span><span class="p">:</span>
+        <span class="n">maxIter</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">maxIter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">nochange</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">lenChange</span> <span class="o">=</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">+</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="n">d</span><span class="p">]</span> <span class="o">-</span> \
+                    <span class="n">setup_cost</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span> <span class="o">-</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">d</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">lenChange</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># reverse</span>
+                    <span class="p">[</span><span class="n">success</span><span class="p">,</span> <span class="n">p_tmp</span><span class="p">]</span> <span class="o">=</span> <span class="n">reverse_nodes</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">vehicle</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                                     <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+                        <span class="n">p1</span> <span class="o">=</span> <span class="n">p_tmp</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+                        <span class="n">nochange</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="one_move"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.one_move">[docs]</a><span class="k">def</span> <span class="nf">one_move</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">vehicle</span> <span class="ow">in</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">])):</span>
+            <span class="n">removal_index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">removal_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">r</span><span class="p">]):</span>
+                <span class="n">p_tmp</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">vehicle</span><span class="p">][</span><span class="n">r</span><span class="p">][</span><span class="n">removal_index</span><span class="p">]</span>
+                <span class="c1"># remove customer from chromosome</span>
+                <span class="n">p_tmp</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">vehicle</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">removal_index</span><span class="p">,</span> <span class="n">quality</span><span class="p">[</span><span class="n">vehicle</span><span class="p">],</span>
+                                  <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">[</span><span class="n">vehicle</span><span class="p">],</span>
+                                  <span class="n">setup_cost</span><span class="p">[</span><span class="n">vehicle</span><span class="p">])</span>
+                <span class="c1"># insert customer at best insert location</span>
+                <span class="n">p_tmp</span><span class="o">.</span><span class="n">insertion_minimal_cost</span><span class="p">(</span>
+                    <span class="n">node</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span>
+                    <span class="n">setup_cost</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">p1</span><span class="o">.</span><span class="n">criteria</span> <span class="o">==</span> <span class="n">prop</span><span class="o">.</span><span class="n">problem_criteria</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span>
+                    <span class="n">p_tmp</span><span class="o">.</span><span class="n">evaluate_schedule</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">)</span>
+                    <span class="n">imp</span> <span class="o">=</span> <span class="n">p_tmp</span><span class="o">.</span><span class="n">total_duration</span> <span class="o">-</span> <span class="n">p1</span><span class="o">.</span><span class="n">total_duration</span>
+                <span class="k">elif</span> <span class="n">p1</span><span class="o">.</span><span class="n">criteria</span> <span class="o">==</span> <span class="n">prop</span><span class="o">.</span><span class="n">problem_criteria</span><span class="o">.</span><span class="n">COST</span><span class="p">:</span>
+                    <span class="n">imp</span> <span class="o">=</span> <span class="n">p_tmp</span><span class="o">.</span><span class="n">total_cost</span> <span class="o">-</span> <span class="n">p1</span><span class="o">.</span><span class="n">total_cost</span>
+                <span class="k">if</span> <span class="n">imp</span><span class="p">:</span>
+                    <span class="n">p1</span> <span class="o">=</span> <span class="n">p_tmp</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+                <span class="n">removal_index</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">p1</span></div>
+
+
+<div class="viewcode-block" id="calc_insertion_reduce_idle"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.calc_insertion_reduce_idle">[docs]</a><span class="k">def</span> <span class="nf">calc_insertion_reduce_idle</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">limit_low</span><span class="p">,</span> <span class="n">limit_up</span><span class="p">,</span>
+                               <span class="n">idle_slot</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">,</span>
+                               <span class="n">demand</span><span class="p">):</span>
+    <span class="c1"># remove node from its place</span>
+    <span class="n">cost_diff</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">][</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">cost_diff</span> <span class="o">-=</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">p</span><span class="p">][</span><span class="n">candidate</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">][</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cost_diff</span> <span class="o">+=</span> <span class="p">(</span><span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">p</span><span class="p">][</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">candidate</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+
+    <span class="n">best_ins</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># find insertion place</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">limit_low</span><span class="p">,</span> <span class="n">limit_up</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">][</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dur_diff_ins</span> <span class="o">=</span> <span class="p">(</span><span class="n">setup_time</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">p</span><span class="p">][</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+</span> <span class="n">duration</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+</span>
+                        <span class="n">setup_time</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">candidate</span><span class="p">][</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">setup_time</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">p</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+        <span class="n">cost_diff_ins</span> <span class="o">=</span> <span class="p">(</span><span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">p</span><span class="p">][</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+</span>
+                         <span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">candidate</span><span class="p">][</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span>
+                         <span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">p</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">cost_diff</span> <span class="o">+</span> <span class="n">cost_diff_ins</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">dur_diff_ins</span> <span class="o">&lt;</span> <span class="n">idle_slot</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">best_ins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">dur_diff_ins</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="p">((</span><span class="n">best_ins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">dur_diff_ins</span><span class="p">)</span> <span class="ow">and</span>
+                 <span class="p">(</span><span class="n">cost_diff</span> <span class="o">+</span> <span class="n">cost_diff_ins</span> <span class="o">&lt;</span> <span class="n">best_ins</span><span class="p">[</span><span class="mi">2</span><span class="p">]))):</span>
+                <span class="n">best_ins</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+                <span class="n">best_ins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">dur_diff_ins</span>
+                <span class="n">best_ins</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost_diff</span> <span class="o">+</span> <span class="n">cost_diff_ins</span>
+    <span class="k">return</span> <span class="n">best_ins</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="one_move_reduce_idle"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.one_move_reduce_idle">[docs]</a><span class="k">def</span> <span class="nf">one_move_reduce_idle</span><span class="p">(</span><span class="n">mdvrp</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">,</span>
+                         <span class="n">demand</span><span class="p">):</span>
+    <span class="n">p_res</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="c1"># all idle tasks</span>
+    <span class="n">idle</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">idle_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">constrained_tasks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">p_res</span><span class="o">.</span><span class="n">all_constraints</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">idle</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_res</span><span class="o">.</span><span class="n">idle_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">continue</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="p">[</span><span class="n">d</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">limit_up</span><span class="p">]</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">find_node_route</span><span class="p">(</span><span class="n">p_res</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">limit_up</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">limit_up</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">limit_low</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">con</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">constrained_tasks</span><span class="p">]</span>
+            <span class="n">n_i</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">limit_low</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">limit_low</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">con</span><span class="p">[</span><span class="n">n_i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">limit_up</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">])):</span>
+            <span class="n">candidate</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">constrained_tasks</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">idle_slot</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">idle_slots</span><span class="p">[</span><span class="n">item</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p_res</span><span class="o">.</span><span class="n">idle_slots</span><span class="p">[</span><span class="n">item</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">best_ind</span> <span class="o">=</span> <span class="n">calc_insertion_reduce_idle</span><span class="p">(</span><span class="n">p_res</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span>
+                                                  <span class="n">limit_low</span><span class="p">,</span> <span class="n">limit_up</span><span class="p">,</span>
+                                                  <span class="n">idle_slot</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+                                                  <span class="n">setup_time</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">,</span>
+                                                  <span class="n">demand</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">best_ind</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">p_res</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">quality</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span>
+                              <span class="n">demand</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">p_res</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">best_ind</span><span class="p">,</span> <span class="n">quality</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">duration</span><span class="p">,</span>
+                                  <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">setup_cost</span><span class="p">[</span><span class="n">v</span><span class="p">]):</span>
+                <span class="k">return</span> <span class="n">p1</span>
+            <span class="n">p_res</span><span class="o">.</span><span class="n">evaluate_schedule</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">)</span>
+            <span class="n">limit_up</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_res</span><span class="o">.</span><span class="n">idle_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">break</span>
+    <span class="k">return</span> <span class="n">p_res</span></div>
+
+
+<div class="viewcode-block" id="two_swap"><a class="viewcode-back" href="../../operators.html#operators.genetic_operators.two_swap">[docs]</a><span class="k">def</span> <span class="nf">two_swap</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">depot_vehicles</span><span class="p">,</span> <span class="n">borderline_customers</span><span class="p">,</span> <span class="n">candidate_depots</span><span class="p">,</span>
+             <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span> <span class="n">setup_cost</span><span class="p">):</span>
+
+    <span class="n">borderline_customers_shuffle</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">borderline_customers</span><span class="p">)</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">borderline_customers_shuffle</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">node1</span> <span class="ow">in</span> <span class="n">borderline_customers_shuffle</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">node1</span> <span class="ow">in</span> <span class="n">p1</span><span class="o">.</span><span class="n">unserved_customers</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="p">[</span><span class="n">d1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">n1_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">find_node_route</span><span class="p">(</span>
+            <span class="n">p1</span><span class="p">,</span> <span class="n">node1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">depot_vehicles</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="p">[</span><span class="n">candidates</span><span class="p">,</span> <span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_swap_candidates</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">node1</span><span class="p">,</span>
+                                              <span class="n">borderline_customers_shuffle</span><span class="p">,</span>
+                                              <span class="n">candidate_depots</span><span class="p">,</span> <span class="n">depot_vehicles</span><span class="p">,</span>
+                                              <span class="n">demand</span><span class="p">)</span>
+        <span class="n">bestImprovement</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">bestSwap</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">node2</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="p">[</span><span class="n">d2</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">n2_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">find_node_route</span><span class="p">(</span>
+                <span class="n">p1</span><span class="p">,</span> <span class="n">node2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">depot_vehicles</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="p">[</span><span class="n">success</span><span class="p">,</span> <span class="n">p_tmp</span><span class="p">,</span> <span class="n">cost</span><span class="p">]</span> <span class="o">=</span> <span class="n">swap_nodes</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span>
+                                                <span class="n">n1_index</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span>
+                                                <span class="n">n2_index</span><span class="p">,</span> <span class="n">quality</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+                                                <span class="n">setup_time</span><span class="p">,</span> <span class="n">demand</span><span class="p">,</span>
+                                                <span class="n">setup_cost</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">p1</span><span class="o">.</span><span class="n">criteria</span> <span class="o">==</span> <span class="n">prop</span><span class="o">.</span><span class="n">problem_criteria</span><span class="o">.</span><span class="n">COST</span><span class="p">:</span>
+                    <span class="n">imp</span> <span class="o">=</span> <span class="n">cost</span>
+                <span class="k">elif</span> <span class="n">p1</span><span class="o">.</span><span class="n">criteria</span> <span class="o">==</span> <span class="n">prop</span><span class="o">.</span><span class="n">problem_criteria</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span>
+                    <span class="n">old_dur</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">total_duration</span>
+                    <span class="n">p_tmp</span><span class="o">.</span><span class="n">evaluate_schedule</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">setup_time</span><span class="p">)</span>
+                    <span class="n">imp</span> <span class="o">=</span> <span class="n">p_tmp</span><span class="o">.</span><span class="n">total_duration</span> <span class="o">-</span> <span class="n">old_dur</span>
+                <span class="k">if</span> <span class="n">imp</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">bestImprovement</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">bestImprovement</span> <span class="o">=</span> <span class="n">imp</span>
+                        <span class="n">bestSwap</span> <span class="o">=</span> <span class="n">p_tmp</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">imp</span> <span class="o">&lt;</span> <span class="n">bestImprovement</span><span class="p">:</span>
+                            <span class="n">bestImprovement</span> <span class="o">=</span> <span class="n">imp</span>
+                            <span class="n">bestSwap</span> <span class="o">=</span> <span class="n">p_tmp</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="c1"># swap the solution with best found</span>
+        <span class="k">if</span> <span class="n">bestImprovement</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">bestSwap</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">p1</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cbm_pop_lib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

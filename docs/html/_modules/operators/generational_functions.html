@@ -1,0 +1,183 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>operators.generational_functions &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for operators.generational_functions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># !/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">rospkg</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">cbm_pop_lib.common.chromosome</span> <span class="kn">import</span> <span class="n">Chromosome</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+
+<div class="viewcode-block" id="init_result"><a class="viewcode-back" href="../../operators.html#operators.generational_functions.init_result">[docs]</a><span class="k">def</span> <span class="nf">init_result</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">mdvrp</span><span class="p">,</span> <span class="n">prec</span><span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;problem_variant&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">problem_variant</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;criteria&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">criteria</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Chromosome</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">max_vehicle_load</span><span class="p">,</span> <span class="n">prec</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="node_predecessors"><a class="viewcode-back" href="../../operators.html#operators.generational_functions.node_predecessors">[docs]</a><span class="k">def</span> <span class="nf">node_predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">prec</span><span class="p">):</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">prec</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prec</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">pred</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">node_predecessors</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">prec</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="node_successors"><a class="viewcode-back" href="../../operators.html#operators.generational_functions.node_successors">[docs]</a><span class="k">def</span> <span class="nf">node_successors</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">prec</span><span class="p">):</span>
+    <span class="n">succ</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">prec</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">prec</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">succ</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">node_successors</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">prec</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">succ</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="greedy_insertion"><a class="viewcode-back" href="../../operators.html#operators.generational_functions.greedy_insertion">[docs]</a><span class="k">def</span> <span class="nf">greedy_insertion</span><span class="p">(</span><span class="n">mdvrp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gradually builds the routes by selecting randomly an unserved customer</span>
+<span class="sd">    and by inserting it at minimum cost in existing routes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        MDVRP: MDVRP problem instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># init prec</span>
+    <span class="n">prec</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">precedence_graph</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">precedence_graph</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">node_predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">precedence_graph</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prec</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+                <span class="n">prec</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">succ</span> <span class="ow">in</span> <span class="n">node_successors</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">precedence_graph</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">succ</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prec</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+                <span class="n">prec</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">succ</span><span class="p">)</span>
+
+    <span class="n">all_tasks</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">init_result</span><span class="p">(</span><span class="n">all_tasks</span><span class="p">,</span> <span class="n">mdvrp</span><span class="p">,</span> <span class="n">prec</span><span class="p">)</span>
+
+    <span class="c1"># all_tasks = deepcopy(temp)</span>
+    <span class="n">_constr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">topological_sort</span><span class="p">(</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">precedence_graph</span><span class="p">))</span>
+    <span class="n">constr</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_constr</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_tasks</span><span class="p">]</span>
+    <span class="n">ord_tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_tasks</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constr</span><span class="p">]</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">ord_tasks</span><span class="p">)</span>
+    <span class="n">ord_tasks</span> <span class="o">=</span> <span class="n">constr</span> <span class="o">+</span> <span class="n">ord_tasks</span>
+    <span class="n">check_recursion</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">ord_tasks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">insertion_minimal_cost</span><span class="p">(</span>
+            <span class="n">ord_tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+            <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">,</span>
+            <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">ord_tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">find_cycle</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">all_constraints</span><span class="p">)</span>
+                <span class="nb">print</span> <span class="n">c</span>
+                <span class="c1"># print self.population[-1].routes</span>
+                <span class="n">raw_input</span><span class="p">(</span><span class="s2">&quot;cycle&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">nx</span><span class="o">.</span><span class="n">exception</span><span class="o">.</span><span class="n">NetworkXUnfeasible</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">ord_tasks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ord_tasks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">check_recursion</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_tasks</span><span class="p">):</span>
+                <span class="nb">print</span> <span class="n">result</span><span class="o">.</span><span class="n">routes</span>
+                <span class="nb">print</span> <span class="s2">&quot;couldn&#39;t do it ........&quot;</span>
+                <span class="nb">print</span> <span class="n">check_recursion</span>
+                <span class="n">raw_input</span><span class="p">()</span>
+                <span class="n">ord_tasks</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">all_tasks</span><span class="p">)</span>
+                <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">ord_tasks</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">init_result</span><span class="p">(</span><span class="n">all_tasks</span><span class="p">,</span> <span class="n">mdvrp</span><span class="p">,</span> <span class="n">prec</span><span class="p">)</span>
+                <span class="n">check_recursion</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">continue</span>
+            <span class="n">ord_tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">check_recursion</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># raw_input()</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cbm_pop_lib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

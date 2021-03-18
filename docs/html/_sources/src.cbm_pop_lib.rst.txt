@@ -1,0 +1,40 @@
+src\.cbm\_pop\_lib package
+==========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    src.cbm_pop_lib.aux
+    src.cbm_pop_lib.common
+    src.cbm_pop_lib.cordeau_parser
+    src.cbm_pop_lib.operators
+
+Submodules
+----------
+
+src\.cbm\_pop\_lib\.cbm\_pop\_agent module
+------------------------------------------
+
+.. automodule:: src.cbm_pop_lib.cbm_pop_agent
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src\.cbm\_pop\_lib\.cbm\_pop\_algorithm module
+----------------------------------------------
+
+.. automodule:: src.cbm_pop_lib.cbm_pop_algorithm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: src.cbm_pop_lib
+    :members:
+    :undoc-members:
+    :show-inheritance:

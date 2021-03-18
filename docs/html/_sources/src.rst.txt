@@ -1,0 +1,42 @@
+src package
+===========
+
+Subpackages
+-----------
+
+.. toctree::
+
+    src.cbm_pop_lib
+
+Submodules
+----------
+
+src\.cbm\_pop\_agent\_node module
+---------------------------------
+
+.. automodule:: src.cbm_pop_agent_node
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+diagram
+-------
+
+.. inheritance-diagram:: src.cbm_pop_agent_node.CBMPopAgentNode
+
+src\.cbm\_pop\_alg\_mdvrp module
+--------------------------------
+
+.. automodule:: src.cbm_pop_alg_mdvrp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: src
+    :members:
+    :undoc-members:
+    :show-inheritance:

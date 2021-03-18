@@ -1,0 +1,235 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cbm_pop_lib.operators.auxiliary_functions &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for cbm_pop_lib.operators.auxiliary_functions</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="find_node_route"><a class="viewcode-back" href="../../../cbm_pop_lib.operators.html#cbm_pop_lib.operators.auxiliary_functions.find_node_route">[docs]</a><span class="k">def</span> <span class="nf">find_node_route</span><span class="p">(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">node1</span><span class="p">,</span> <span class="n">vehicles_per_depot</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">n1_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1"># find a route where this node is</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">chromosome</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chromosome</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">node1</span> <span class="ow">in</span> <span class="n">chromosome</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r</span><span class="p">]:</span>
+                <span class="n">v1</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="k">if</span> <span class="n">vehicles_per_depot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">d1</span> <span class="o">=</span> <span class="n">v</span> <span class="o">/</span> <span class="n">vehicles_per_depot</span>
+                <span class="n">r1</span> <span class="o">=</span> <span class="n">r</span>
+                <span class="n">n1_index</span> <span class="o">=</span> <span class="n">chromosome</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">r1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">node1</span><span class="p">)</span>
+                <span class="k">break</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">d1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">n1_index</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="calc_borderline_customers"><a class="viewcode-back" href="../../../cbm_pop_lib.operators.html#cbm_pop_lib.operators.auxiliary_functions.calc_borderline_customers">[docs]</a><span class="k">def</span> <span class="nf">calc_borderline_customers</span><span class="p">(</span><span class="n">vehicles_per_depot</span><span class="p">,</span> <span class="n">setup</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+    <span class="n">borderline_customers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">candidate_depots</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">depot_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">setup</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">setup</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">vehicles_per_depot</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">depot</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">setup</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">vehicles_per_depot</span><span class="p">):</span>
+        <span class="n">first_vehicle</span> <span class="o">=</span> <span class="n">depot</span> <span class="o">*</span> <span class="n">vehicles_per_depot</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">setup</span><span class="p">[</span><span class="n">first_vehicle</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">depot_dist</span><span class="p">[:,</span> <span class="n">depot</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+
+    <span class="n">clustering_criteria</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">depot_dist</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">customer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">setup</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">depot_dist</span><span class="p">[</span><span class="n">customer</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">clustering_criteria</span><span class="p">[</span><span class="n">customer</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">depot_dist</span><span class="p">[</span><span class="n">customer</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">min_dist</span><span class="p">)</span> <span class="o">/</span> <span class="n">min_dist</span>
+        <span class="n">depot_candidates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">clustering_criteria</span><span class="p">[</span><span class="n">customer</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&lt;</span> <span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">depot_candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">borderline_customers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">customer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">candidate_depots</span><span class="p">[</span><span class="n">customer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">depot_candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">borderline_customers</span><span class="p">,</span> <span class="n">candidate_depots</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="pareto_ranking_procedure_eval"><a class="viewcode-back" href="../../../cbm_pop_lib.operators.html#cbm_pop_lib.operators.auxiliary_functions.pareto_ranking_procedure_eval">[docs]</a><span class="k">def</span> <span class="nf">pareto_ranking_procedure_eval</span><span class="p">(</span><span class="n">population</span><span class="p">):</span>
+
+    <span class="n">fitness</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rankingParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_ranking_params</span><span class="p">())</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">population</span><span class="p">]</span>
+
+    <span class="n">dominanceMatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)))</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)))</span>
+
+    <span class="n">param_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rankingParams</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">param_num</span><span class="p">):</span>
+                    <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">rankingParams</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                                      <span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">rankingParams</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">dist</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+
+            <span class="n">nonDominated</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">param_num</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">rankingParams</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">rankingParams</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rankingParams</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">rankingParams</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
+                        <span class="n">nonDominated</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">break</span>
+
+            <span class="c1"># if solution j dominates i</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">nonDominated</span><span class="p">:</span>
+                <span class="n">dominanceMatrix</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)):</span>
+        <span class="n">rawFitness</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dominanceMatrix</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">population</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">rawFitness</span> <span class="o">+</span> <span class="n">density</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">fitness</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fitness</span></div>
+
+
+<div class="viewcode-block" id="best_solution_index"><a class="viewcode-back" href="../../../cbm_pop_lib.operators.html#cbm_pop_lib.operators.auxiliary_functions.best_solution_index">[docs]</a><span class="k">def</span> <span class="nf">best_solution_index</span><span class="p">(</span><span class="n">compare</span><span class="p">,</span> <span class="n">fitness</span><span class="p">):</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">fitness</span><span class="p">)</span>
+    <span class="n">maxFitInd</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fitness</span><span class="p">))</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fitness</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">maxFitInd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">maxFitInd</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">best1</span> <span class="o">=</span> <span class="n">maxFitInd</span>
+
+    <span class="c1"># first (MIN)</span>
+    <span class="n">primary_ranking_param</span> <span class="o">=</span> <span class="p">[</span><span class="n">compare</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_ranking_params</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">best1</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">primary_ranking_param</span><span class="p">)</span>
+    <span class="n">min_ind1</span> <span class="o">=</span> <span class="p">[</span><span class="n">best1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">primary_ranking_param</span><span class="p">))</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">primary_ranking_param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">]</span>
+    <span class="n">best2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">best1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">min_ind1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">best2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">best1</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">best2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">best2</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">compare</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_ranking_params</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">best1</span>
+
+    <span class="c1"># second (MIN)</span>
+    <span class="n">secondary_ranking_param</span> <span class="o">=</span> <span class="p">[</span><span class="n">compare</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_ranking_params</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                               <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">best2</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">secondary_ranking_param</span><span class="p">)</span>
+    <span class="n">min_ind2</span> <span class="o">=</span> <span class="p">[</span><span class="n">best2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">secondary_ranking_param</span><span class="p">))</span> <span class="k">if</span> <span class="n">secondary_ranking_param</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">m</span><span class="p">]</span>
+    <span class="n">best3</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">best2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">min_ind2</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">best3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">best2</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">best3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">best3</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">best3</span></div>
+
+
+<div class="viewcode-block" id="roulette_wheel"><a class="viewcode-back" href="../../../cbm_pop_lib.operators.html#cbm_pop_lib.operators.auxiliary_functions.roulette_wheel">[docs]</a><span class="k">def</span> <span class="nf">roulette_wheel</span><span class="p">(</span><span class="n">fitness</span><span class="p">):</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fitness</span><span class="p">)</span>
+    <span class="n">prob_sum</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">win</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fitness</span><span class="p">)):</span>
+        <span class="n">prob_sum</span> <span class="o">+=</span> <span class="n">fitness</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">s</span>
+        <span class="k">if</span> <span class="n">win</span> <span class="o">&lt;=</span> <span class="n">prob_sum</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cbm_pop_lib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

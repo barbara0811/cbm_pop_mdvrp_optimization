@@ -1,0 +1,320 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cbm_pop_lib.cbm_pop_agent &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for cbm_pop_lib.cbm_pop_agent</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Basic CBM_pop agent implementation.</span>
+<span class="sd">For a specific use, please implement the abstract methods.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;barbanas&#39;</span>
+
+<span class="kn">from</span> <span class="nn">cbm_pop_mdvrp.msg</span> <span class="kn">import</span> <span class="n">BestSolution</span><span class="p">,</span> <span class="n">WeightMatrix</span><span class="p">,</span> <span class="n">MissionInfo</span><span class="p">,</span> <span class="n">FloatArray</span>
+<span class="kn">from</span> <span class="nn">std_msgs.msg</span> <span class="kn">import</span> <span class="n">String</span><span class="p">,</span> <span class="n">Empty</span>
+<span class="kn">from</span> <span class="nn">rospy.numpy_msg</span> <span class="kn">import</span> <span class="n">numpy_msg</span>
+<span class="kn">from</span> <span class="nn">cbm_pop_lib.cbm_pop_algorithm</span> <span class="kn">import</span> <span class="n">CBMPopAlgorithm</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">cbm_pop_lib.aux</span> <span class="kn">import</span> <span class="n">my_logger</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">rospkg</span>
+
+<span class="n">rospack</span> <span class="o">=</span> <span class="n">rospkg</span><span class="o">.</span><span class="n">RosPack</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="CBMPopAgent"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent">[docs]</a><span class="k">class</span> <span class="nc">CBMPopAgent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm_class</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_properties</span><span class="p">(</span><span class="n">algorithm_class</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_topics</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CBMPopAgent.init_properties"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_properties">[docs]</a>    <span class="k">def</span> <span class="nf">init_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm_class</span><span class="p">):</span>
+        <span class="c1"># Logger setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">my_logger</span><span class="o">.</span><span class="n">CustomLogger</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+
+        <span class="c1"># Agent name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_names</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;~name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Agent names are </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_names</span><span class="p">))</span>
+
+        <span class="c1"># Get cbm parameters location (package and path)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbm_params_path</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;~alg_params_path&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbm_params_pack</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;~alg_params_pack&#39;</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rospack</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbm_params_pack</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbm_params_path</span><span class="p">)</span>
+
+        <span class="c1"># Instantiate the algorithm with the specified parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">algorithm_class</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_mission_structures</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.init_topics"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_topics">[docs]</a>    <span class="k">def</span> <span class="nf">init_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialization of CBM agent topics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Mission start message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span>
+            <span class="s2">&quot;optimize&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimize_cb</span><span class="p">)</span>
+
+        <span class="c1"># Mission info pub and sub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;/vrp_mission_info&quot;</span><span class="p">,</span> <span class="n">MissionInfo</span><span class="p">,</span>
+                                        <span class="n">queue_size</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/vrp_mission_info&quot;</span><span class="p">,</span> <span class="n">MissionInfo</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">mission_info_cb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_duration_pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;/setup_duration&quot;</span><span class="p">,</span>
+                                                  <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                                  <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_duration_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/setup_duration&quot;</span><span class="p">,</span>
+                                                   <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">setup_duration_cb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_cost_pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;/setup_cost&quot;</span><span class="p">,</span>
+                                              <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                              <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_cost_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/setup_cost&quot;</span><span class="p">,</span>
+                                               <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">setup_cost_cb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration_pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;/duration&quot;</span><span class="p">,</span>
+                                            <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                            <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/duration&quot;</span><span class="p">,</span>
+                                             <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">duration_cb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">demand_pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;/demand&quot;</span><span class="p">,</span>
+                                          <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                          <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">demand_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/demand&quot;</span><span class="p">,</span>
+                                           <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">demand_cb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quality_pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;/quality&quot;</span><span class="p">,</span>
+                                           <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                           <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quality_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/quality&quot;</span><span class="p">,</span>
+                                            <span class="n">numpy_msg</span><span class="p">(</span><span class="n">FloatArray</span><span class="p">),</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">quality_cb</span><span class="p">)</span>
+
+        <span class="c1"># CBM messages</span>
+        <span class="c1"># Algorithm signals to the agent it&#39;s finished optimizing</span>
+        <span class="c1"># (after that -- waiting until all agents are done)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alg_done_sub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span>
+            <span class="s2">&quot;alg_done&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished_cb</span><span class="p">)</span>
+        <span class="c1"># Signal to the caller that the planning procedure is done</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">done_pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">,</span> <span class="n">Empty</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;initialized topics&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.optimize_cb"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.optimize_cb">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">prepare_problem_structure</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_names</span><span class="p">:</span>
+            <span class="n">msg_out</span> <span class="o">=</span> <span class="n">MissionInfo</span><span class="p">()</span>
+            <span class="n">msg_out</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="n">msg_out</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;start&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">msg_out</span><span class="p">)</span>
+        <span class="c1"># wait a bit to get all messages</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alg_runtime</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_mission</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No mdvrp structure to optimize.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.prepare_problem_structure"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.prepare_problem_structure">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">prepare_problem_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s2">&quot;No implementation of problem structure definition.&quot;</span> <span class="o">+</span>
+                          <span class="s2">&quot; For full functionality, implement specific cbm&quot;</span> <span class="o">+</span>
+                          <span class="s2">&quot; agent as in example scenario.&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.finish_mission"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.finish_mission">[docs]</a>    <span class="k">def</span> <span class="nf">finish_mission</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Mission planning done.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_final_solution</span><span class="p">()</span>
+        <span class="c1"># Reinitialize mission structures</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">initialize_structures</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_mission_structures</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">done_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">Empty</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.process_final_solution"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.process_final_solution">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process_final_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s2">&quot;No implementation of processing of final solution.&quot;</span> <span class="o">+</span>
+                          <span class="s2">&quot; For full functionality, implement specific cbm&quot;</span> <span class="o">+</span>
+                          <span class="s2">&quot; agent as in example scenario.&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.init_mission_structures"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_mission_structures">[docs]</a>    <span class="k">def</span> <span class="nf">init_mission_structures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupDurationOffset</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupCostOffset</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">durationOffset</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">demandOffset</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qualityOffset</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotPositions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotStatus</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robots</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initialized mission structures&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.mission_info_cb"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.mission_info_cb">[docs]</a>    <span class="k">def</span> <span class="nf">mission_info_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">robotPositions</span><span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">agent</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">position</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">robotStatus</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;done&quot;</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotPositions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">robotStatus</span><span class="p">[</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">agent</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robotStatus</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.finished_cb"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.finished_cb">[docs]</a>    <span class="k">def</span> <span class="nf">finished_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">msgOut</span> <span class="o">=</span> <span class="n">MissionInfo</span><span class="p">()</span>
+        <span class="n">msgOut</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">msgOut</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;done&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">msgOut</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.setup_duration_cb"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.setup_duration_cb">[docs]</a>    <span class="k">def</span> <span class="nf">setup_duration_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">sender</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">_connection_header</span><span class="p">[</span><span class="s1">&#39;callerid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">Id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">vehicle_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setupDurationOffset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setupDurationOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setupDurationOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">[</span><span class="n">Id</span> <span class="o">+</span>
+                                         <span class="n">o</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupDurationOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.setup_cost_cb"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.setup_cost_cb">[docs]</a>    <span class="k">def</span> <span class="nf">setup_cost_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">sender</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">_connection_header</span><span class="p">[</span><span class="s1">&#39;callerid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">Id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">vehicle_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setupCostOffset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setupCostOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setupCostOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">[</span><span class="n">Id</span> <span class="o">+</span>
+                                     <span class="n">o</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupCostOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.duration_cb"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.duration_cb">[docs]</a>    <span class="k">def</span> <span class="nf">duration_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">sender</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">_connection_header</span><span class="p">[</span><span class="s1">&#39;callerid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">Id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">vehicle_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">durationOffset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">durationOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">durationOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">[</span><span class="n">Id</span> <span class="o">+</span> <span class="n">o</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">durationOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.demand_cb"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.demand_cb">[docs]</a>    <span class="k">def</span> <span class="nf">demand_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">sender</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">_connection_header</span><span class="p">[</span><span class="s1">&#39;callerid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">Id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">vehicle_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">demandOffset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">demandOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">demandOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">[</span><span class="n">Id</span> <span class="o">+</span> <span class="n">o</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">demandOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="CBMPopAgent.quality_cb"><a class="viewcode-back" href="../../cbm_pop_lib.html#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.quality_cb">[docs]</a>    <span class="k">def</span> <span class="nf">quality_cb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">sender</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">_connection_header</span><span class="p">[</span><span class="s1">&#39;callerid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">Id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">vehicle_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualityOffset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qualityOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qualityOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">[</span><span class="n">Id</span> <span class="o">+</span> <span class="n">o</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qualityOffset</span><span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cbm_pop_lib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

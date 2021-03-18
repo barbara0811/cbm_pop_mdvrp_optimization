@@ -1,0 +1,224 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>src.cbm_pop_lib.common.mdvrp &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for src.cbm_pop_lib.common.mdvrp</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">rospkg</span>
+<span class="n">rospack</span> <span class="o">=</span> <span class="n">rospkg</span><span class="o">.</span><span class="n">RosPack</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="MDVRP"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.MDVRP">[docs]</a><span class="k">class</span> <span class="nc">MDVRP</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>  <span class="c1"># customer number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>  <span class="c1"># depot number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="n">m</span>  <span class="c1"># vehicle number</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">depot_vehicles</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depot_labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vehicle_labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vehicles</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># quality</span>
+        <span class="c1"># k_ir, default quality is 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quality_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># s_ir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_duration_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># t_ijr</span>
+        <span class="c1"># cost</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">demand_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># q_ir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_cost_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># c_ijr</span>
+
+        <span class="c1"># max vehicle load</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_vehicle_load</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">precedence_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">criteria</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem_variant</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="MDVRP.load_precedence_constraints"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.MDVRP.load_precedence_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">load_precedence_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">precedence_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_precedence_constraint</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="MDVRP.draw_clusters"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.MDVRP.draw_clusters">[docs]</a>    <span class="k">def</span> <span class="nf">draw_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">customers</span><span class="p">,</span> <span class="n">candidate_depots</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">gist_rainbow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depot_labels</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">customers</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">depot</span> <span class="ow">in</span> <span class="n">candidate_depots</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">customer_labels</span><span class="p">[</span><span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]]</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">depot_labels</span><span class="p">[</span><span class="n">depot</span><span class="p">]]</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                         <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">b</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                         <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">depot</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MDVRP.input_precedece_constraints"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.MDVRP.input_precedece_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">input_precedece_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_precedence_constraint</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="MDVRP.add_precedence_constraint"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.MDVRP.add_precedence_constraint">[docs]</a>    <span class="k">def</span> <span class="nf">add_precedence_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">succ</span><span class="p">):</span>
+
+        <span class="n">id1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">id2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">succ</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precedence_graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">id1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precedence_graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precedence_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">id1</span><span class="p">,</span> <span class="n">id2</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">find_cycle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precedence_graph</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">c</span>
+            <span class="nb">print</span> <span class="s2">&quot;cycle!!&quot;</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="MDVRP.draw"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.MDVRP.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;depot&quot;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;ro&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;bo&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MDVRP.draw_3d"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.MDVRP.draw_3d">[docs]</a>    <span class="k">def</span> <span class="nf">draw_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;depot&quot;</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;ro&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;bo&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MDVRP.plot"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.MDVRP.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>  <span class="c1"># position [x, y]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">t</span>  <span class="c1"># type (depot, customer), for graphical representation</span></div>
+
+
+<div class="viewcode-block" id="Vehicle"><a class="viewcode-back" href="../../../../src.cbm_pop_lib.common.html#src.cbm_pop_lib.common.mdvrp.Vehicle">[docs]</a><span class="k">class</span> <span class="nc">Vehicle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">depot</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>  <span class="c1"># position [x, y]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depot</span> <span class="o">=</span> <span class="n">depot</span></div>
+        <span class="c1"># self.maxLoad = -1</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cbm_pop_lib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,333 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cbm_pop_lib package &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cbm_pop_lib.aux package" href="cbm_pop_lib.aux.html" />
+    <link rel="prev" title="cbm_pop_lib" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cbm-pop-lib-package">
+<h1>cbm_pop_lib package<a class="headerlink" href="#cbm-pop-lib-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_lib.aux.html">cbm_pop_lib.aux package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cbm_pop_lib.aux.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cbm_pop_lib.aux.html#module-cbm_pop_lib.aux.my_logger">cbm_pop_lib.aux.my_logger module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_lib.common.html">cbm_pop_lib.common package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cbm_pop_lib.common.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cbm_pop_lib.common.html#module-cbm_pop_lib.common.cbm_alg_properties">cbm_pop_lib.common.cbm_alg_properties module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cbm_pop_lib.common.html#module-cbm_pop_lib.common.chromosome">cbm_pop_lib.common.chromosome module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cbm_pop_lib.common.html#module-cbm_pop_lib.common.mdvrp">cbm_pop_lib.common.mdvrp module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_lib.cordeau_parser.html">cbm_pop_lib.cordeau_parser package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cbm_pop_lib.cordeau_parser.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cbm_pop_lib.cordeau_parser.html#module-cbm_pop_lib.cordeau_parser.cordeau_parser">cbm_pop_lib.cordeau_parser.cordeau_parser module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_lib.operators.html">cbm_pop_lib.operators package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cbm_pop_lib.operators.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cbm_pop_lib.operators.html#module-cbm_pop_lib.operators.auxiliary_functions">cbm_pop_lib.operators.auxiliary_functions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cbm_pop_lib.operators.html#module-cbm_pop_lib.operators.generational_functions">cbm_pop_lib.operators.generational_functions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cbm_pop_lib.operators.html#module-cbm_pop_lib.operators.genetic_operators">cbm_pop_lib.operators.genetic_operators module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cbm_pop_lib.cbm_pop_agent">
+<span id="cbm-pop-lib-cbm-pop-agent-module"></span><h2>cbm_pop_lib.cbm_pop_agent module<a class="headerlink" href="#module-cbm_pop_lib.cbm_pop_agent" title="Permalink to this headline">¶</a></h2>
+<p>Basic CBM_pop agent implementation.
+For a specific use, please implement the abstract methods.</p>
+<dl class="class">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent">
+<em class="property">class </em><code class="descname">CBMPopAgent</code><span class="sig-paren">(</span><em>algorithm_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.demand_cb">
+<code class="descname">demand_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.demand_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.demand_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.duration_cb">
+<code class="descname">duration_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.duration_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.duration_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.finish_mission">
+<code class="descname">finish_mission</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.finish_mission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.finish_mission" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.finished_cb">
+<code class="descname">finished_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.finished_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.finished_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_mission_structures">
+<code class="descname">init_mission_structures</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.init_mission_structures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_mission_structures" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_properties">
+<code class="descname">init_properties</code><span class="sig-paren">(</span><em>algorithm_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.init_properties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_topics">
+<code class="descname">init_topics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.init_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.init_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization of CBM agent topics.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.mission_info_cb">
+<code class="descname">mission_info_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.mission_info_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.mission_info_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.optimize_cb">
+<code class="descname">optimize_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.optimize_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.optimize_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.prepare_problem_structure">
+<code class="descname">prepare_problem_structure</code><span class="sig-paren">(</span><em>problem_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.prepare_problem_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.prepare_problem_structure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.process_final_solution">
+<code class="descname">process_final_solution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.process_final_solution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.process_final_solution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.quality_cb">
+<code class="descname">quality_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.quality_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.quality_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.setup_cost_cb">
+<code class="descname">setup_cost_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.setup_cost_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.setup_cost_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_agent.CBMPopAgent.setup_duration_cb">
+<code class="descname">setup_duration_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_agent.html#CBMPopAgent.setup_duration_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_agent.CBMPopAgent.setup_duration_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cbm_pop_lib.cbm_pop_algorithm">
+<span id="cbm-pop-lib-cbm-pop-algorithm-module"></span><h2>cbm_pop_lib.cbm_pop_algorithm module<a class="headerlink" href="#module-cbm_pop_lib.cbm_pop_algorithm" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm">
+<em class="property">class </em><code class="descname">CBMPopAlgorithm</code><span class="sig-paren">(</span><em>params</em>, <em>ns_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.action">
+<code class="descname">action</code><span class="sig-paren">(</span><em>mdvrp</em>, <em>o</em>, <em>p1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.best_solution_cb">
+<code class="descname">best_solution_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.best_solution_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.best_solution_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.broadcast_solution">
+<code class="descname">broadcast_solution</code><span class="sig-paren">(</span><em>solution</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.broadcast_solution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.broadcast_solution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.broadcast_weight_matrix">
+<code class="descname">broadcast_weight_matrix</code><span class="sig-paren">(</span><em>matrix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.broadcast_weight_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.broadcast_weight_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.calc_probability">
+<code class="descname">calc_probability</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.calc_probability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.calc_probability" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.deliberation">
+<code class="descname">deliberation</code><span class="sig-paren">(</span><em>cycle_int</em>, <em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.deliberation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.deliberation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.evaluate_population">
+<code class="descname">evaluate_population</code><span class="sig-paren">(</span><em>mdvrp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.evaluate_population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.evaluate_population" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.individual_learning">
+<code class="descname">individual_learning</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.individual_learning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.individual_learning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.init_agent_states">
+<code class="descname">init_agent_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.init_agent_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.init_agent_states" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.init_population">
+<code class="descname">init_population</code><span class="sig-paren">(</span><em>mdvrp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.init_population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.init_population" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method that creates initial population of feasible solutions to
+the scheduling problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>- a problem to solve</strong> (<a class="reference internal" href="cbm_pop_lib.common.html#module-cbm_pop_lib.common.mdvrp" title="cbm_pop_lib.common.mdvrp"><em>mdvrp</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.initialize_structures">
+<code class="descname">initialize_structures</code><span class="sig-paren">(</span><em>pop_size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.initialize_structures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.initialize_structures" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.load_parameters">
+<code class="descname">load_parameters</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.load_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.load_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.mimetism_learning">
+<code class="descname">mimetism_learning</code><span class="sig-paren">(</span><em>matrix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.mimetism_learning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.mimetism_learning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.optimize">
+<code class="descname">optimize</code><span class="sig-paren">(</span><em>mdvrp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.optimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.optimize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.perception">
+<code class="descname">perception</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.perception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.perception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.process_best_solutions">
+<code class="descname">process_best_solutions</code><span class="sig-paren">(</span><em>mdvrp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.process_best_solutions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.process_best_solutions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.weight_matrix_cb">
+<code class="descname">weight_matrix_cb</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cbm_pop_lib/cbm_pop_algorithm.html#CBMPopAlgorithm.weight_matrix_cb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cbm_pop_lib.cbm_pop_algorithm.CBMPopAlgorithm.weight_matrix_cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cbm_pop_lib">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cbm_pop_lib" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cbm_pop_lib</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cbm_pop_lib package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">cbm_pop_lib</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">cbm_pop_lib</a></li>
+      <li>Next: <a href="cbm_pop_lib.aux.html" title="next chapter">cbm_pop_lib.aux package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/cbm_pop_lib.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

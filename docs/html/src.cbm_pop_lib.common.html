@@ -1,0 +1,190 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>src.cbm_pop_lib.common package &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.cbm_pop_lib.cordeau_parser package" href="src.cbm_pop_lib.cordeau_parser.html" />
+    <link rel="prev" title="src.cbm_pop_lib.aux package" href="src.cbm_pop_lib.aux.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-cbm-pop-lib-common-package">
+<h1>src.cbm_pop_lib.common package<a class="headerlink" href="#src-cbm-pop-lib-common-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.cbm_pop_lib.common.cbm_alg_properties">
+<span id="src-cbm-pop-lib-common-cbm-alg-properties-module"></span><h2>src.cbm_pop_lib.common.cbm_alg_properties module<a class="headerlink" href="#module-src.cbm_pop_lib.common.cbm_alg_properties" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.cbm_pop_lib.common.cbm_alg_properties.enum">
+<code class="descname">enum</code><span class="sig-paren">(</span><em>**enums</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/cbm_alg_properties.html#enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.cbm_alg_properties.enum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.cbm_pop_lib.common.cbm_alg_properties.problem_criteria">
+<code class="descname">problem_criteria</code><a class="headerlink" href="#src.cbm_pop_lib.common.cbm_alg_properties.problem_criteria" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">src.cbm_pop_lib.common.cbm_alg_properties.Enum</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.cbm_pop_lib.common.cbm_alg_properties.problem_variants">
+<code class="descname">problem_variants</code><a class="headerlink" href="#src.cbm_pop_lib.common.cbm_alg_properties.problem_variants" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">src.cbm_pop_lib.common.cbm_alg_properties.Enum</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="src-cbm-pop-lib-common-chromosome-module">
+<h2>src.cbm_pop_lib.common.chromosome module<a class="headerlink" href="#src-cbm-pop-lib-common-chromosome-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.cbm_pop_lib.common.mdvrp">
+<span id="src-cbm-pop-lib-common-mdvrp-module"></span><h2>src.cbm_pop_lib.common.mdvrp module<a class="headerlink" href="#module-src.cbm_pop_lib.common.mdvrp" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.cbm_pop_lib.common.mdvrp.MDVRP">
+<em class="property">class </em><code class="descname">MDVRP</code><span class="sig-paren">(</span><em>k</em>, <em>n</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#MDVRP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.MDVRP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="src.cbm_pop_lib.common.mdvrp.MDVRP.add_precedence_constraint">
+<code class="descname">add_precedence_constraint</code><span class="sig-paren">(</span><em>pred</em>, <em>succ</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#MDVRP.add_precedence_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.MDVRP.add_precedence_constraint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.cbm_pop_lib.common.mdvrp.MDVRP.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#MDVRP.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.MDVRP.draw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.cbm_pop_lib.common.mdvrp.MDVRP.draw_3d">
+<code class="descname">draw_3d</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#MDVRP.draw_3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.MDVRP.draw_3d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.cbm_pop_lib.common.mdvrp.MDVRP.draw_clusters">
+<code class="descname">draw_clusters</code><span class="sig-paren">(</span><em>customers</em>, <em>candidate_depots</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#MDVRP.draw_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.MDVRP.draw_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.cbm_pop_lib.common.mdvrp.MDVRP.input_precedece_constraints">
+<code class="descname">input_precedece_constraints</code><span class="sig-paren">(</span><em>constraints</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#MDVRP.input_precedece_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.MDVRP.input_precedece_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.cbm_pop_lib.common.mdvrp.MDVRP.load_precedence_constraints">
+<code class="descname">load_precedence_constraints</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#MDVRP.load_precedence_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.MDVRP.load_precedence_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.cbm_pop_lib.common.mdvrp.MDVRP.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#MDVRP.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.MDVRP.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.cbm_pop_lib.common.mdvrp.Node">
+<em class="property">class </em><code class="descname">Node</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>t</em>, <em>z=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.cbm_pop_lib.common.mdvrp.Vehicle">
+<em class="property">class </em><code class="descname">Vehicle</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z=0</em>, <em>depot=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/cbm_pop_lib/common/mdvrp.html#Vehicle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.cbm_pop_lib.common.mdvrp.Vehicle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.cbm_pop_lib.common">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.cbm_pop_lib.common" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="src.html">src package</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="src.html">src package</a><ul>
+  <li><a href="src.cbm_pop_lib.html">src.cbm_pop_lib package</a><ul>
+      <li>Previous: <a href="src.cbm_pop_lib.aux.html" title="previous chapter">src.cbm_pop_lib.aux package</a></li>
+      <li>Next: <a href="src.cbm_pop_lib.cordeau_parser.html" title="next chapter">src.cbm_pop_lib.cordeau_parser package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/src.cbm_pop_lib.common.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

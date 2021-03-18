@@ -1,0 +1,22 @@
+src\.cbm\_pop\_lib\.cordeau\_parser package
+===========================================
+
+Submodules
+----------
+
+src\.cbm\_pop\_lib\.cordeau\_parser\.cordeau\_parser module
+-----------------------------------------------------------
+
+.. automodule:: src.cbm_pop_lib.cordeau_parser.cordeau_parser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: src.cbm_pop_lib.cordeau_parser
+    :members:
+    :undoc-members:
+    :show-inheritance:

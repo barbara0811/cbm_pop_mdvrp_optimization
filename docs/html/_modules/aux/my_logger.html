@@ -1,0 +1,199 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>aux.my_logger &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for aux.my_logger</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">DEBUGS</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">addLevelName</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUGS</span><span class="p">,</span> <span class="s2">&quot;DEBUGS&quot;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;DEBUGS&#39;</span><span class="p">]</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">DEBUGV</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">addLevelName</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUGV</span><span class="p">,</span> <span class="s2">&quot;DEBUGV&quot;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;DEBUGV&#39;</span><span class="p">]</span>
+
+<span class="c1"># These are the sequences need to get colored ouput</span>
+<span class="n">RESET_SEQ</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
+<span class="n">BOLD_SEQ</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1m&quot;</span>
+
+<span class="n">COLORS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;WARNING&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[38;5;130m&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;INFO&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[36m&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;DEBUG&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[38;5;2m&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;CRITICAL&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;ERROR&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;DEBUGS&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;DEBUGV&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span>
+<span class="p">}</span>
+
+<span class="n">LEVELS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;DEBUG&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+    <span class="s1">&#39;INFO&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="s1">&#39;WARN&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+    <span class="s1">&#39;DEBUGS&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUGS</span><span class="p">,</span>
+    <span class="s1">&#39;DEBUGV&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUGV</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="ColoredFormatter"><a class="viewcode-back" href="../../aux.html#aux.my_logger.ColoredFormatter">[docs]</a><span class="k">class</span> <span class="nc">ColoredFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ColoredFormatter.format"><a class="viewcode-back" href="../../aux.html#aux.my_logger.ColoredFormatter.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="n">skip_line</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">:</span>
+            <span class="n">skip_line</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;!&#39;</span><span class="p">:</span>
+            <span class="n">bold</span> <span class="o">=</span> <span class="n">BOLD_SEQ</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bold</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">bold</span> <span class="o">+</span> <span class="n">COLORS</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">levelname</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span> <span class="o">+</span> <span class="n">RESET_SEQ</span>
+        <span class="k">if</span> <span class="n">skip_line</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div></div>
+
+
+<div class="viewcode-block" id="CustomLogger"><a class="viewcode-back" href="../../aux.html#aux.my_logger.CustomLogger">[docs]</a><span class="k">class</span> <span class="nc">CustomLogger</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CustomLogger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">LEVELS</span><span class="p">[</span><span class="n">level</span><span class="p">])</span>
+
+        <span class="c1"># create console handler and set level to debug</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+        <span class="n">ch</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+
+        <span class="c1"># create formatter</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">ColoredFormatter</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%(levelname)s</span><span class="s1">] [</span><span class="si">%(name)s</span><span class="s1">]&gt; </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># add formatter to ch</span>
+        <span class="n">ch</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+        <span class="c1"># add ch to logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CustomLogger.debugs"><a class="viewcode-back" href="../../aux.html#aux.my_logger.CustomLogger.debugs">[docs]</a>    <span class="k">def</span> <span class="nf">debugs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUGS</span><span class="p">):</span>
+            <span class="c1"># Yes, logger takes its &#39;*args&#39; as &#39;args&#39;.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUGS</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CustomLogger.debugv"><a class="viewcode-back" href="../../aux.html#aux.my_logger.CustomLogger.debugv">[docs]</a>    <span class="k">def</span> <span class="nf">debugv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUGV</span><span class="p">):</span>
+            <span class="c1"># Yes, logger takes its &#39;*args&#39; as &#39;args&#39;.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUGV</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">CustomLogger</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;test_logger&#39;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;debug message&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">info message&#39;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s1">&#39;info&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;warn message&#39;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;critical message&#39;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">logfatal</span><span class="p">(</span><span class="s1">&#39;fatal&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">error message&#39;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debugs</span><span class="p">(</span><span class="s1">&#39;some message&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cbm_pop_lib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

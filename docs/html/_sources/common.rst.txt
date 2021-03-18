@@ -1,0 +1,38 @@
+common package
+==============
+
+Submodules
+----------
+
+common\.cbm\_alg\_properties module
+-----------------------------------
+
+.. automodule:: common.cbm_alg_properties
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+common\.chromosome module
+-------------------------
+
+.. automodule:: common.chromosome
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+common\.mdvrp module
+--------------------
+
+.. automodule:: common.mdvrp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: common
+    :members:
+    :undoc-members:
+    :show-inheritance:

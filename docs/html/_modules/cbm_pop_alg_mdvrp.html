@@ -1,0 +1,273 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cbm_pop_alg_mdvrp &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for cbm_pop_alg_mdvrp</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;barbanas&#39;</span>
+
+<span class="kn">from</span> <span class="nn">cbm_pop_lib.cbm_pop_algorithm</span> <span class="kn">import</span> <span class="n">CBMPopAlgorithm</span>
+<span class="kn">from</span> <span class="nn">cbm_pop_lib.aux</span> <span class="kn">import</span> <span class="n">my_logger</span>
+<span class="kn">import</span> <span class="nn">cbm_pop_lib.operators.genetic_operators</span> <span class="k">as</span> <span class="nn">op</span>
+<span class="kn">import</span> <span class="nn">cbm_pop_lib.operators.auxiliary_functions</span> <span class="k">as</span> <span class="nn">aux</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+
+<div class="viewcode-block" id="CBMPopAlgorithmMDVRP"><a class="viewcode-back" href="../cbm_pop_alg_mdvrp.html#cbm_pop_alg_mdvrp.CBMPopAlgorithmMDVRP">[docs]</a><span class="k">class</span> <span class="nc">CBMPopAlgorithmMDVRP</span><span class="p">(</span><span class="n">CBMPopAlgorithm</span><span class="p">):</span>
+    
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ns_</span><span class="p">):</span>
+        <span class="n">CBMPopAlgorithm</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ns_</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CBMPopAlgorithmMDVRP.init_agent_states"><a class="viewcode-back" href="../cbm_pop_alg_mdvrp.html#cbm_pop_alg_mdvrp.CBMPopAlgorithmMDVRP.init_agent_states">[docs]</a>    <span class="k">def</span> <span class="nf">init_agent_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;States:</span>
+
+<span class="sd">        | s1 -- crossover operator has been applied</span>
+<span class="sd">        | s2 -- diversification operator has been applied</span>
+<span class="sd">        | s3 -- intensification operator two_opt</span>
+<span class="sd">        | s4 -- intensification operator two_swap</span>
+<span class="sd">        | s5 -- intensification operator one_move</span>
+<span class="sd">        | s6 -- all intensification operators have been applied without modifying the solution </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># states depend on number of operators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;s1&quot;</span><span class="p">,</span> <span class="s2">&quot;s2&quot;</span><span class="p">,</span> <span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="s2">&quot;s4&quot;</span><span class="p">,</span> <span class="s2">&quot;s5&quot;</span><span class="p">,</span> <span class="s2">&quot;s6&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;crossover_bcrc&quot;</span><span class="p">,</span> <span class="s2">&quot;crossover_bcrc_pop&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;mutation_intra_depot_reversal&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;mutation_intra_depot_swapping&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;mutation_inter_depot_swapping&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;mutation_single_customer_rerouting&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;two_opt&quot;</span><span class="p">,</span> <span class="s2">&quot;two_swap&quot;</span><span class="p">,</span> <span class="s2">&quot;one_move&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">divers_num</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intens_num</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_cycle_int</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">divers_num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">divers_num</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intens_num</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">op_score_co</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">divers_num</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intens_num</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CBMPopAlgorithmMDVRP.action"><a class="viewcode-back" href="../cbm_pop_alg_mdvrp.html#cbm_pop_alg_mdvrp.CBMPopAlgorithmMDVRP.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdvrp</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">p1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implementation of specific action calls for this problem</span>
+<span class="sd">        (classic MDVRP with precedence constraints).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mdvrp (MDVRP): MDVRP problem instance</span>
+<span class="sd">            o (int): operator to apply</span>
+<span class="sd">            p1 (Chromosome): a solution to modify</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Chromosome: modified solution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op_score_co</span><span class="p">[</span><span class="n">o</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># apply the operator o</span>
+        <span class="k">if</span> <span class="n">o</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+                <span class="c1"># best cost route crossover with best coalition solution</span>
+                <span class="n">p2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_sol_coalition</span>
+            <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># choose a second parent</span>
+                <span class="n">p2_ind</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">roulette_wheel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">)</span>
+                <span class="n">p2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[</span><span class="n">p2_ind</span><span class="p">]</span>
+
+            <span class="n">vehicle_candidates</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">routes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">vehicle_candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">p1</span>
+            <span class="n">offsprings</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">crossover_bcrc</span><span class="p">(</span><span class="n">vehicle_candidates</span><span class="p">,</span>
+                                           <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">,</span>
+                                           <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                                           <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span>
+                                           <span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">,</span>
+                                           <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">)</span>
+            <span class="n">compare</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># evaluate offsprings</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">offsprings</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">offsprings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">unserved_customers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">nx</span><span class="o">.</span><span class="n">find_cycle</span><span class="p">(</span><span class="n">offsprings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">all_constraints</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="k">except</span> <span class="n">nx</span><span class="o">.</span><span class="n">exception</span><span class="o">.</span><span class="n">NetworkXUnfeasible</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="n">offsprings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">evaluate_schedule</span><span class="p">(</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                                                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">)</span>
+                <span class="n">compare</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offsprings</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">compare</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">p1</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">pareto_ranking_procedure_eval</span><span class="p">(</span><span class="n">compare</span><span class="p">)</span>
+            <span class="c1"># # return best between children</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="n">aux</span><span class="o">.</span><span class="n">best_solution_index</span><span class="p">(</span><span class="n">compare</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">best</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">best_ind</span> <span class="o">=</span> <span class="n">best</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">best_ind</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">best</span><span class="p">)</span>
+            <span class="c1"># if len(compare) == 2:</span>
+            <span class="c1">#     self.population[p2_ind] = compare[1 - best_ind]</span>
+            <span class="k">return</span> <span class="n">compare</span><span class="p">[</span><span class="n">best_ind</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># mutation intra depot reversal</span>
+            <span class="c1"># choose a vehicle for mutation</span>
+            <span class="n">vehicle</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">mutation_intra_depot_reversal</span><span class="p">(</span>
+                <span class="n">p1</span><span class="p">,</span> <span class="n">vehicle</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># mutation intra depot swapping</span>
+            <span class="n">depot</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">depot_vehicles</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">mutation_intra_depot_swapping</span><span class="p">(</span>
+                <span class="n">p1</span><span class="p">,</span> <span class="n">depot</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">depot_vehicles</span><span class="p">[</span><span class="n">depot</span><span class="p">],</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">mutation_inter_depot_swapping</span><span class="p">(</span>
+                <span class="n">p1</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">depot_vehicles</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">borderlineCustomers</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">candidateDepots</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">vehicle</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">mutation_single_customer_rerouting</span><span class="p">(</span>
+                <span class="n">vehicle</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">two_opt</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                                   <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span>
+                                   <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">two_swap</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">depot_vehicles</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">borderlineCustomers2</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">candidateDepots2</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">one_move</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">,</span>
+                                    <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">one_move_reduce_idle</span><span class="p">(</span>
+                <span class="n">mdvrp</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">quality_matrix</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">,</span> <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_cost_matrix</span><span class="p">,</span>
+                <span class="n">mdvrp</span><span class="o">.</span><span class="n">demand_matrix</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">p1</span>
+
+        <span class="k">if</span> <span class="n">offspring</span><span class="o">.</span><span class="n">check_prec</span><span class="p">():</span>
+            <span class="n">offspring</span><span class="o">.</span><span class="n">evaluate_schedule</span><span class="p">(</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">duration_matrix</span><span class="p">,</span>
+                                        <span class="n">mdvrp</span><span class="o">.</span><span class="n">setup_duration_matrix</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">offspring</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Offspring precedence constraints not satisfied.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">p1</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">cbm_pop_lib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

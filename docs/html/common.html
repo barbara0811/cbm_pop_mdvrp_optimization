@@ -1,0 +1,539 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>common package &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="common-package">
+<h1>common package<a class="headerlink" href="#common-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-common.cbm_alg_properties">
+<span id="common-cbm-alg-properties-module"></span><h2>common.cbm_alg_properties module<a class="headerlink" href="#module-common.cbm_alg_properties" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="common.cbm_alg_properties.enum">
+<code class="descclassname">common.cbm_alg_properties.</code><code class="descname">enum</code><span class="sig-paren">(</span><em>**enums</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cbm_alg_properties.html#enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cbm_alg_properties.enum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="common.cbm_alg_properties.problem_criteria">
+<code class="descclassname">common.cbm_alg_properties.</code><code class="descname">problem_criteria</code><a class="headerlink" href="#common.cbm_alg_properties.problem_criteria" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">common.cbm_alg_properties.Enum</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="common.cbm_alg_properties.problem_variants">
+<code class="descclassname">common.cbm_alg_properties.</code><code class="descname">problem_variants</code><a class="headerlink" href="#common.cbm_alg_properties.problem_variants" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">common.cbm_alg_properties.Enum</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-common.chromosome">
+<span id="common-chromosome-module"></span><h2>common.chromosome module<a class="headerlink" href="#module-common.chromosome" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="common.chromosome.Chromosome">
+<em class="property">class </em><code class="descclassname">common.chromosome.</code><code class="descname">Chromosome</code><span class="sig-paren">(</span><em>all_customers</em>, <em>max_vehicle_load</em>, <em>precedence_constraints</em>, <em>n</em>, <em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="common.chromosome.Chromosome.add_arrow">
+<code class="descname">add_arrow</code><span class="sig-paren">(</span><em>line</em>, <em>position=None</em>, <em>size=15</em>, <em>color=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.add_arrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.add_arrow" title="Permalink to this definition">¶</a></dt>
+<dd><p>add an arrow to a line.
+line:       Line2D object
+position:   x-position of the arrow. If None, mean of xdata is taken
+direction:  ‘left’ or ‘right’
+size:       size of the arrow in fontsize points
+color:      if None, line color is taken.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.add_node">
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>node</em>, <em>vehicle</em>, <em>route</em>, <em>insertion_index</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.add_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a node to the route.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<em>int</em>) – node id</li>
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>route</strong> (<em>int</em>) – route id</li>
+<li><strong>insertion_index</strong> (<em>int</em>) – insertion index within the route</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.add_route">
+<code class="descname">add_route</code><span class="sig-paren">(</span><em>vehicle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.add_route"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.add_route" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an empty route to the chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vehicle</strong> (<em>int</em>) – vehicle id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.adjust_route_schedule">
+<code class="descname">adjust_route_schedule</code><span class="sig-paren">(</span><em>vehicle</em>, <em>start_route</em>, <em>start_index</em>, <em>duration</em>, <em>setup_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.adjust_route_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.adjust_route_schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjust route schedules for a vehicle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>start_route</strong> (<em>int</em>) – start route index</li>
+<li><strong>start_index</strong> (<em>int</em>) – start index within the route</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.adjust_schedule">
+<code class="descname">adjust_schedule</code><span class="sig-paren">(</span><em>duration</em>, <em>setup_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.adjust_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.adjust_schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjust the schedule timing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.calc_insertion_cost">
+<code class="descname">calc_insertion_cost</code><span class="sig-paren">(</span><em>j</em>, <em>n</em>, <em>route</em>, <em>setup</em>, <em>static</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.calc_insertion_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.calc_insertion_cost" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.calc_min_insertion_cost">
+<code class="descname">calc_min_insertion_cost</code><span class="sig-paren">(</span><em>n</em>, <em>vehicle</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.calc_min_insertion_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.calc_min_insertion_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate minimal insetrion cost of the node in the chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> (<em>int</em>) – node id</li>
+<li><strong>vehicle</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</li>
+<li><strong>duration</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</li>
+<li><strong>setup_time</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</li>
+<li><strong>demand</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</li>
+<li><strong>setup_cost</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">[description]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">[type]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.calc_possible_insertions">
+<code class="descname">calc_possible_insertions</code><span class="sig-paren">(</span><em>route</em>, <em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.calc_possible_insertions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.calc_possible_insertions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.check_prec">
+<code class="descname">check_prec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.check_prec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.check_prec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if precedence constraints are satisfied in the schedule.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">are prec constraints ok</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone a chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a clone of chromosome</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="cbm_pop_lib.common.html#cbm_pop_lib.common.chromosome.Chromosome" title="cbm_pop_lib.common.chromosome.Chromosome">Chromosome</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.evaluate_schedule">
+<code class="descname">evaluate_schedule</code><span class="sig-paren">(</span><em>duration</em>, <em>setup_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.evaluate_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.evaluate_schedule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.get_linearized_schedules">
+<code class="descname">get_linearized_schedules</code><span class="sig-paren">(</span><em>node_labels=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.get_linearized_schedules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.get_linearized_schedules" title="Permalink to this definition">¶</a></dt>
+<dd><p>[summary]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nodeLabels</strong> (<em>[</em><em>type</em><em>]</em><em>, </em><em>optional</em>) – [description]. Defaults to None.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">[description]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">[type]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.get_ranking_params">
+<code class="descname">get_ranking_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.get_ranking_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.get_ranking_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters based on which the chromosome is evaluated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of ranking params</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.get_route_predecessors">
+<code class="descname">get_route_predecessors</code><span class="sig-paren">(</span><em>route</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.get_route_predecessors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.get_route_predecessors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.get_route_successors">
+<code class="descname">get_route_successors</code><span class="sig-paren">(</span><em>route</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.get_route_successors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.get_route_successors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.init_problem_params">
+<code class="descname">init_problem_params</code><span class="sig-paren">(</span><em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.init_problem_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.init_problem_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.initialize_schedule">
+<code class="descname">initialize_schedule</code><span class="sig-paren">(</span><em>duration</em>, <em>setup_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.initialize_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.initialize_schedule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.insertion_minimal_cost">
+<code class="descname">insertion_minimal_cost</code><span class="sig-paren">(</span><em>node</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.insertion_minimal_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.insertion_minimal_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert node in the chromosome in the location with minimal cost.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<em>int</em>) – node id</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.makespan">
+<code class="descname">makespan</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.makespan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.makespan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get total duration of the calculated plan (considering all routes
+of all vehicles).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">total solution duration</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>mdvrp</em>, <em>plot=True</em>, <em>save=False</em>, <em>figpath=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>[summary]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mdvrp</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</li>
+<li><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – [description]. Defaults to True.</li>
+<li><strong>save</strong> (<em>bool</em><em>, </em><em>optional</em>) – [description]. Defaults to False.</li>
+<li><strong>figpath</strong> (<em>str</em><em>, </em><em>optional</em>) – [description]. Defaults to “”.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.remove_node">
+<code class="descname">remove_node</code><span class="sig-paren">(</span><em>vehicle</em>, <em>route</em>, <em>removal_index</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.remove_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.remove_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the node from route.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vehicle</strong> (<em>int</em>) – vehicle id</li>
+<li><strong>route</strong> (<em>int</em>) – route id</li>
+<li><strong>removal_index</strong> (<em>int</em>) – removal index within the route</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.remove_nodes">
+<code class="descname">remove_nodes</code><span class="sig-paren">(</span><em>nodes</em>, <em>quality</em>, <em>duration</em>, <em>setup_time</em>, <em>demand</em>, <em>setup_cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.remove_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.remove_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove nodes from the chromosome.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (<em>int list</em>) – a list of node ids</li>
+<li><strong>quality</strong> (<em>np.matrix</em>) – quality matrix for all vehicles</li>
+<li><strong>duration</strong> (<em>np.matrix</em>) – duration matrix for all vehicles</li>
+<li><strong>setup_time</strong> (<em>np.matrix</em>) – setup time matrix for all vehicles</li>
+<li><strong>demand</strong> (<em>np.matrix</em>) – demand matrix for all vehicles</li>
+<li><strong>setup_cost</strong> (<em>np.matrix</em>) – setup cost matrix for all vehicles</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.update_all_prec_insertion">
+<code class="descname">update_all_prec_insertion</code><span class="sig-paren">(</span><em>r</em>, <em>node</em>, <em>insertion_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.update_all_prec_insertion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.update_all_prec_insertion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.update_all_prec_removal">
+<code class="descname">update_all_prec_removal</code><span class="sig-paren">(</span><em>route</em>, <em>removal_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.update_all_prec_removal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.update_all_prec_removal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.chromosome.Chromosome.update_successor_EST">
+<code class="descname">update_successor_EST</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/chromosome.html#Chromosome.update_successor_EST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.chromosome.Chromosome.update_successor_EST" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update earliest start times for all successors of the node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node</strong> (<em>int</em>) – node id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-common.mdvrp">
+<span id="common-mdvrp-module"></span><h2>common.mdvrp module<a class="headerlink" href="#module-common.mdvrp" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="common.mdvrp.MDVRP">
+<em class="property">class </em><code class="descclassname">common.mdvrp.</code><code class="descname">MDVRP</code><span class="sig-paren">(</span><em>k</em>, <em>n</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#MDVRP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.MDVRP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="common.mdvrp.MDVRP.add_precedence_constraint">
+<code class="descname">add_precedence_constraint</code><span class="sig-paren">(</span><em>pred</em>, <em>succ</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#MDVRP.add_precedence_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.MDVRP.add_precedence_constraint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.mdvrp.MDVRP.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#MDVRP.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.MDVRP.draw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.mdvrp.MDVRP.draw_3d">
+<code class="descname">draw_3d</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#MDVRP.draw_3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.MDVRP.draw_3d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.mdvrp.MDVRP.draw_clusters">
+<code class="descname">draw_clusters</code><span class="sig-paren">(</span><em>customers</em>, <em>candidate_depots</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#MDVRP.draw_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.MDVRP.draw_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.mdvrp.MDVRP.input_precedece_constraints">
+<code class="descname">input_precedece_constraints</code><span class="sig-paren">(</span><em>constraints</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#MDVRP.input_precedece_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.MDVRP.input_precedece_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.mdvrp.MDVRP.load_precedence_constraints">
+<code class="descname">load_precedence_constraints</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#MDVRP.load_precedence_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.MDVRP.load_precedence_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="common.mdvrp.MDVRP.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#MDVRP.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.MDVRP.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="common.mdvrp.Node">
+<em class="property">class </em><code class="descclassname">common.mdvrp.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>t</em>, <em>z=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="common.mdvrp.Vehicle">
+<em class="property">class </em><code class="descclassname">common.mdvrp.</code><code class="descname">Vehicle</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z=0</em>, <em>depot=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/mdvrp.html#Vehicle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.mdvrp.Vehicle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-common">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-common" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to CBM_pop MDVRP optimization’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">cbm_pop_lib</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/common.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/common.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,38 @@
+src\.cbm\_pop\_lib\.common package
+==================================
+
+Submodules
+----------
+
+src\.cbm\_pop\_lib\.common\.cbm\_alg\_properties module
+-------------------------------------------------------
+
+.. automodule:: src.cbm_pop_lib.common.cbm_alg_properties
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src\.cbm\_pop\_lib\.common\.chromosome module
+---------------------------------------------
+
+.. automodule:: src.cbm_pop_lib.common.chromosome
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src\.cbm\_pop\_lib\.common\.mdvrp module
+----------------------------------------
+
+.. automodule:: src.cbm_pop_lib.common.mdvrp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: src.cbm_pop_lib.common
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,22 @@
+src\.cbm\_pop\_lib\.aux package
+===============================
+
+Submodules
+----------
+
+src\.cbm\_pop\_lib\.aux\.my\_logger module
+------------------------------------------
+
+.. automodule:: src.cbm_pop_lib.aux.my_logger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: src.cbm_pop_lib.aux
+    :members:
+    :undoc-members:
+    :show-inheritance:

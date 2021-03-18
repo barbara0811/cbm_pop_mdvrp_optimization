@@ -1,0 +1,22 @@
+aux package
+===========
+
+Submodules
+----------
+
+aux\.my\_logger module
+----------------------
+
+.. automodule:: aux.my_logger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: aux
+    :members:
+    :undoc-members:
+    :show-inheritance:

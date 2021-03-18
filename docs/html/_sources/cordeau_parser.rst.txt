@@ -1,0 +1,22 @@
+cordeau\_parser package
+=======================
+
+Submodules
+----------
+
+cordeau\_parser\.cordeau\_parser module
+---------------------------------------
+
+.. automodule:: cordeau_parser.cordeau_parser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: cordeau_parser
+    :members:
+    :undoc-members:
+    :show-inheritance:

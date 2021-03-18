@@ -1,0 +1,156 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cbm_pop_agent_node &#8212; CBM_pop MDVRP optimization  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for cbm_pop_agent_node</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Example of a specific node implementation of CBM_pop agent.</span>
+<span class="sd">The evaluated examples are from Crodeau dataset.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;barbanas&#39;</span>
+
+<span class="kn">from</span> <span class="nn">cbm_pop_lib.cbm_pop_agent</span> <span class="kn">import</span> <span class="n">CBMPopAgent</span>
+<span class="kn">from</span> <span class="nn">cbm_pop_alg_mdvrp</span> <span class="kn">import</span> <span class="n">CBMPopAlgorithmMDVRP</span>
+<span class="kn">from</span> <span class="nn">cbm_pop_lib.cordeau_parser</span> <span class="kn">import</span> <span class="n">cordeau_parser</span> <span class="k">as</span> <span class="n">parser</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">rospkg</span>
+
+<span class="n">rospack</span> <span class="o">=</span> <span class="n">rospkg</span><span class="o">.</span><span class="n">RosPack</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="CBMPopAgentNode"><a class="viewcode-back" href="../cbm_pop_agent_node.html#cbm_pop_agent_node.CBMPopAgentNode">[docs]</a><span class="k">class</span> <span class="nc">CBMPopAgentNode</span><span class="p">(</span><span class="n">CBMPopAgent</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">CBMPopAgent</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CBMPopAlgorithmMDVRP</span><span class="p">)</span>
+
+        <span class="c1"># get data location</span>
+        <span class="n">pack</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;~data_pack&#39;</span><span class="p">)</span>
+        <span class="n">data_dir</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;~data_dir&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rospack</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">pack</span><span class="p">),</span> <span class="s2">&quot;data/&quot;</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">)</span>
+
+        <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CBMPopAgentNode.prepare_problem_structure"><a class="viewcode-back" href="../cbm_pop_agent_node.html#cbm_pop_agent_node.CBMPopAgentNode.prepare_problem_structure">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_problem_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem_id</span><span class="p">):</span>
+        <span class="c1"># prepare self.mdvrp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading mission info..&quot;</span><span class="p">)</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">problem_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">load_specification_cordeau</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CBMPopAgentNode.process_final_solution"><a class="viewcode-back" href="../cbm_pop_agent_node.html#cbm_pop_agent_node.CBMPopAgentNode.process_final_solution">[docs]</a>    <span class="k">def</span> <span class="nf">process_final_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Optimization runtime </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alg_runtime</span><span class="p">))</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">best_sol_coalition</span><span class="o">.</span><span class="n">get_linearized_schedules</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="o">.</span><span class="n">customer_labels</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">best_sol_coalition</span><span class="o">.</span><span class="n">check_prec</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Precedence OK.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Broken precedence!&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">best_sol_coalition</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Best solution ranking parameters: </span><span class="se">\n</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">best_sol_coalition</span><span class="o">.</span><span class="n">get_ranking_params</span><span class="p">()))</span>
+
+        <span class="nb">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">best_sol_coalition</span><span class="o">.</span><span class="n">get_ranking_params</span><span class="p">()</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">calc_route_len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="o">.</span><span class="n">best_sol_coalition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdvrp</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s2">&quot;cbm_pop_agent&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cbm_agent</span> <span class="o">=</span> <span class="n">CBMPopAgentNode</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ROSInterruptException</span><span class="p">:</span>
+        <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">cbm_pop_lib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cbm_pop_agent_node.html">cbm_pop_agent_node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cbm_pop_alg_mdvrp.html">cbm_pop_alg_mdvrp</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Barbara Arbanas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
