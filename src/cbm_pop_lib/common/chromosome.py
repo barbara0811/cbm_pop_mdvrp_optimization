@@ -61,6 +61,7 @@ class Chromosome(object):
         params (dictionary): algorithm parameters (problem variant and criteria)
 
     """
+
     def __init__(self, all_customers, max_vehicle_load, precedence_constraints,
                  n, params=None):
 
@@ -124,10 +125,22 @@ class Chromosome(object):
         """
         if params is None:
             self.problem_variant = prop.problem_variants.CLASSIC
-            self.criteria = prop.problem_criteria.TIME
+
         else:
-            self.problem_variant = params["problem_variant"]
-            self.criteria = params["criteria"]
+            variant = params["problem_variant"]
+            if variant == 1:
+                self.problem_variant = prop.problem_variants.OPEN
+            else:
+                self.problem_variant = prop.problem_variants.CLASSIC
+            criteria = params["criteria"]
+            if criteria == 2:
+                self.criteria = prop.problem_criteria.COST
+            elif criteria == 3:
+                self.criteria = prop.problem_criteria.MAKESPAN
+            elif criteria == 4:
+                self.criteria = prop.problem_criteria.MAKESPANCOST
+            else:
+                self.criteria = prop.problem_criteria.TIME
 
     def plot(self, mdvrp, plot=True, save=False, figpath=""):
         """
@@ -143,10 +156,7 @@ class Chromosome(object):
         plt.figure(figsize=(20, 20))
         mdvrp.draw()
 
-        if self.criteria == prop.problem_criteria.COST:
-            plt.title(str(self.total_cost))
-        elif self.criteria == prop.problem_criteria.TIME:
-            plt.title(str(self.total_duration))
+        plt.title(str(self.get_ranking_params()))
         colors = cm.gist_rainbow(np.linspace(
             0, 1, num=len(self.routes.keys())))
 
@@ -286,11 +296,17 @@ class Chromosome(object):
 
         Returns:
             list: a list of ranking param values
-
         """
         if len(self.unserved_customers) > 0:
             return [sys.maxint]
-        return [self.total_duration]
+        if self.criteria == prop.problem_criteria.TIME:
+            return [self.total_duration]
+        elif self.criteria == prop.problem_criteria.COST:
+            return [self.total_cost]
+        elif self.criteria == prop.problem_criteria.MAKESPAN:
+            return [self.makespan()]
+        elif self.criteria == prop.problem_criteria.MAKESPANCOST:
+            return [self.makespan(), self.total_cost]
 
     def clone(self):
         """
@@ -811,7 +827,7 @@ class Chromosome(object):
         route_succ = [x for x in route if x in succ and x != node]
         b = len(route) + 1
         if len(route_succ) > 0:
-            b = route.index(route_succ[0])
+            b = route.index(route_succ[0]) + 1
 
         return [a, b]
 
@@ -863,15 +879,17 @@ class Chromosome(object):
             setup_time (np.matrix): setup time matrix for all vehicles
             demand (np.matrix): demand matrix for all vehicles
             setup_cost (np.matrix): setup cost matrix for all vehicles
-        
+
         Returns:
             list: [minimal cost, index of min insertion, route makespan]
 
         """
         min_cost = None
         min_index = [-1, -1]
-
-        if self.criteria == prop.problem_criteria.TIME:
+        time_criteria = [prop.problem_criteria.TIME,
+                         prop.problem_criteria.MAKESPAN,
+                         prop.problem_criteria.MAKESPANCOST]
+        if (self.criteria in time_criteria):
             setup = setup_time
             static = duration
         elif self.criteria == prop.problem_criteria.COST:

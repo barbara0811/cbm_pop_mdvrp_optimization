@@ -404,7 +404,7 @@ def two_opt(p1, duration, setup_time, setup_cost):
 
     for v in p1.routes.keys():
         for r in range(len(p1.routes[v])):
-            two_opt_route(p1, v, r, duration, setup_time, setup_cost[v])
+            two_opt_route(p1, v, r, duration, setup_time, setup_cost)
     return p1
 
 
@@ -426,8 +426,8 @@ def two_opt_route(p1, vehicle, route, duration, setup_time, setup_cost):
             for j in range(i + 2, len(r) - 1):
                 c = r[j]
                 d = r[j + 1]
-                lenChange = setup_cost[a][c] + setup_cost[b][d] - \
-                    setup_cost[a][b] - setup_cost[c][d]
+                lenChange = (setup_cost[vehicle][a][c] + setup_cost[vehicle][b][d] -
+                             setup_cost[vehicle][a][b] - setup_cost[vehicle][c][d])
 
                 if lenChange < 0:
                     # reverse
@@ -439,7 +439,9 @@ def two_opt_route(p1, vehicle, route, duration, setup_time, setup_cost):
 
 
 def one_move(p1, quality, duration, setup_time, demand, setup_cost):
-
+    time_criteria = [prop.problem_criteria.TIME,
+                     prop.problem_criteria.MAKESPAN,
+                     prop.problem_criteria.MAKESPANCOST]
     for vehicle in p1.routes.keys():
         for r in range(len(p1.routes[vehicle])):
             removal_index = 0
@@ -454,7 +456,7 @@ def one_move(p1, quality, duration, setup_time, demand, setup_cost):
                 p_tmp.insertion_minimal_cost(
                     node, quality, duration, setup_time, demand,
                     setup_cost)
-                if p1.criteria == prop.problem_criteria.TIME:
+                if p1.criteria in time_criteria:
                     p_tmp.evaluate_schedule(duration, setup_time)
                     imp = p_tmp.total_duration - p1.total_duration
                 elif p1.criteria == prop.problem_criteria.COST:
@@ -575,9 +577,12 @@ def two_swap(p1, depot_vehicles, borderline_customers, candidate_depots,
                                                 setup_time, demand,
                                                 setup_cost)
             if success:
+                time_criteria = [prop.problem_criteria.TIME,
+                                 prop.problem_criteria.MAKESPAN,
+                                 prop.problem_criteria.MAKESPANCOST]
                 if p1.criteria == prop.problem_criteria.COST:
                     imp = cost
-                elif p1.criteria == prop.problem_criteria.TIME:
+                elif p1.criteria in time_criteria:
                     old_dur = p1.total_duration
                     p_tmp.evaluate_schedule(duration, setup_time)
                     imp = p_tmp.total_duration - old_dur

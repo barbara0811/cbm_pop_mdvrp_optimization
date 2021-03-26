@@ -9,10 +9,8 @@ from cbm_pop_lib.common.chromosome import Chromosome
 from copy import deepcopy
 
 
-def init_result(tasks, mdvrp, prec):
-    params = {}
-    params["problem_variant"] = mdvrp.problem_variant
-    params["criteria"] = mdvrp.criteria
+def init_result(tasks, mdvrp, prec, params):
+
     result = Chromosome(tasks, mdvrp.max_vehicle_load, prec, mdvrp.n, params)
     for v in range(mdvrp.k):
         result.add_route(v)
@@ -33,7 +31,7 @@ def node_successors(node, prec):
     return list(set(succ))
 
 
-def greedy_insertion(mdvrp):
+def greedy_insertion(mdvrp, problem_params):
     """Gradually builds the routes by selecting randomly an unserved customer
     and by inserting it at minimum cost in existing routes.
 
@@ -51,7 +49,7 @@ def greedy_insertion(mdvrp):
                 prec.add_edge(node, succ)
 
     all_tasks = range(1, mdvrp.n + 1)
-    result = init_result(all_tasks, mdvrp, prec)
+    result = init_result(all_tasks, mdvrp, prec, problem_params)
 
     # all_tasks = deepcopy(temp)
     _constr = list(nx.topological_sort(mdvrp.precedence_graph))
