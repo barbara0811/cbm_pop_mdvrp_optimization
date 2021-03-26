@@ -10,7 +10,7 @@ __author__ = 'barbanas'
 from cbm_pop_mdvrp.msg import BestSolution, WeightMatrix, MissionInfo, FloatArray
 from std_msgs.msg import String, Empty
 from rospy.numpy_msg import numpy_msg
-from cbm_pop_lib.cbm_pop_algorithm import CBMPopAlgorithm
+from cbm_pop_lib.modules.cbm_pop_algorithm import CBMPopAlgorithm
 from math import sqrt
 from abc import abstractmethod
 from cbm_pop_lib.aux import my_logger
@@ -103,14 +103,18 @@ class CBMPopAgent(object):
 
     def optimize_cb(self, msg):
 
-        self.prepare_problem_structure(msg.data)
+        self.load_problem_structure(msg.data)
         for name in self.agent_names:
             msg_out = MissionInfo()
             msg_out.agent = name
+            if self.position[2] > 0:
+                msg_out.position = self.position
             msg_out.status = "start"
             self.info_pub.publish(msg_out)
         # wait a bit to get all messages
         rospy.sleep(1)
+
+        self.configure_problem_structure(msg.data)
 
         if self.mdvrp is not None:
             start = rospy.get_time()
@@ -121,10 +125,44 @@ class CBMPopAgent(object):
             self.logger.warn("No mdvrp structure to optimize.")
 
     @abstractmethod
-    def prepare_problem_structure(self, problem_id):
+    def load_problem_structure(self, problem_id):
         self.logger.warn(("No implementation of problem structure definition." +
                           " For full functionality, implement specific cbm" +
                           " agent as in example scenario."))
+
+    @abstractmethod
+    def configure_problem_structure(self, problem_id):
+        """Configure problem structure after all agents are known.
+        This function is for problems where the mission is assessed online.
+        """
+        self.logger.warn(("No implementation of problem structure definition." +
+                          " For full functionality, implement specific cbm" +
+                          " agent as in example scenario."))
+
+    def share_mdvrp(self, Id):
+
+        tmp = self.mdvrp.setup_duration_matrix[Id]
+        tmp = np.reshape(tmp, (tmp.size))
+        self.setup_duration_pub.publish(tmp)
+
+        tmp = self.mdvrp.setup_cost_matrix[Id]
+        tmp = np.reshape(tmp, (tmp.size))
+        self.setup_cost_pub.publish(tmp)
+
+        tmp = self.mdvrp.duration_matrix[Id]
+        np.reshape(tmp, (tmp.size))
+        self.duration_pub.publish(tmp)
+
+        tmp = self.mdvrp.demand_matrix[Id]
+        np.reshape(tmp, (tmp.size))
+        self.demand_pub.publish(tmp)
+
+        tmp = self.mdvrp.quality_matrix[Id]
+        np.reshape(tmp, (tmp.size))
+        self.quality_pub.publish(tmp)
+
+        # wait a bit to start (until all info is exchanged)
+        rospy.sleep(1)
 
     def finish_mission(self):
         self.logger.info("Mission planning done.")
@@ -148,19 +186,20 @@ class CBMPopAgent(object):
         self.demandOffset = {}
         self.qualityOffset = {}
 
-        self.robotPositions = {}
-        self.robotStatus = []
-        self.robots = []
+        self.robot_positions = {}
+        self.robot_status = []
+        self.position = [-1, -1, -1]
+        # self.robots = []
         self.logger.info("Initialized mission structures")
 
     def mission_info_cb(self, msg):
         if msg.status == "start":
-            self.robotPositions[msg.agent] = msg.position
-            self.robotStatus.append(0)
+            self.robot_positions[msg.agent] = msg.position
+            self.robot_status.append(0)
         elif msg.status == "done":
-            labels = self.robotPositions.keys()
-            self.robotStatus[labels.index(msg.agent)] = 1
-            if min(self.robotStatus) == 1:
+            labels = self.robot_positions.keys()
+            self.robot_status[labels.index(msg.agent)] = 1
+            if min(self.robot_status) == 1:
                 self.algorithm.done = True
 
     def finished_cb(self, msg):

@@ -7,7 +7,7 @@ The evaluated examples are from Crodeau dataset.
 
 __author__ = 'barbanas'
 
-from cbm_pop_lib.cbm_pop_agent import CBMPopAgent
+from cbm_pop_lib.modules.cbm_pop_agent import CBMPopAgent
 from cbm_pop_alg_mdvrp import CBMPopAlgorithmMDVRP
 from cbm_pop_lib.cordeau_parser import cordeau_parser as parser
 import rospy
@@ -29,7 +29,7 @@ class CBMPopAgentNode(CBMPopAgent):
 
         rospy.spin()
 
-    def prepare_problem_structure(self, problem_id):
+    def load_problem_structure(self, problem_id):
         # prepare self.mdvrp
         self.logger.info("Loading mission info..")
         filepath = os.path.join(self.data_dir, problem_id)

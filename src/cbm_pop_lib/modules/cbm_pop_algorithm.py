@@ -16,7 +16,7 @@ from copy import deepcopy
 from abc import abstractmethod
 import numpy as np
 import rospy
-from cbm.msg import BestSolution, WeightMatrix
+from cbm_pop_mdvrp.msg import BestSolution, WeightMatrix
 from std_msgs.msg import Empty, String
 from cbm_pop_lib.aux import my_logger
 
@@ -109,6 +109,12 @@ class CBMPopAlgorithm:
         self.cycle_no_change = int(p.find("cycle_no_change").text)
         self.timeout = int(p.find("timeout_s").text)
 
+        variant = int(p.find("problem_variant").text)
+        criteria = int(p.find("criteria").text)
+        self.problem_params = {}
+        self.problem_params["problem_variant"] = variant
+        self.problem_params["criteria"] = criteria
+
     def optimize(self, mdvrp):
 
         self.init_population(mdvrp)
@@ -122,7 +128,10 @@ class CBMPopAlgorithm:
         self.best_solution = self.population[best_ind].clone()
         self.best_sol_buffer.append(self.best_solution)
 
-        if self.population[0].criteria == prop.problem_criteria.TIME:
+        time_criteria = [prop.problem_criteria.TIME,
+                         prop.problem_criteria.MAKESPAN,
+                         prop.problem_criteria.MAKESPANCOST]
+        if self.population[0].criteria in time_criteria:
             setup = mdvrp.setup_duration_matrix
         elif self.population[0].criteria == prop.problem_criteria.COST:
             setup = mdvrp.setup_cost_matrix
@@ -290,10 +299,11 @@ class CBMPopAlgorithm:
         """
         self.population = []
         self.fitness = []
-
+        print self.problem_params
         no_cycle = 0
         while len(self.population) < self.pop_size:
-            self.population.append(gen.greedy_insertion(mdvrp))
+            self.population.append(
+                gen.greedy_insertion(mdvrp, self.problem_params))
             try:
                 c = nx.find_cycle(self.population[-1].all_constraints)
                 self.logger.warn(
