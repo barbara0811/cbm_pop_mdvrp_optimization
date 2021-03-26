@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from cbm_pop_lib.mdvrp import MDVRP, Node, Vehicle
+from cbm_pop_lib.common.mdvrp import MDVRP, Node, Vehicle
 from cbm_pop_lib.common.chromosome import Chromosome
 from cbm_pop_lib.common import cbm_alg_properties as prop
 from math import sqrt, pow
