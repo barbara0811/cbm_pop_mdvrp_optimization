@@ -5,7 +5,10 @@ from catkin_pkg.python_setup import generate_distutils_setup
 
 # fetch values from package.xml
 setup_args = generate_distutils_setup(
-    packages=['cbm_pop_lib'],
-    package_dir={'': 'src/cbm_pop_lib'})
+    packages=['cbm_pop_lib',
+	      'cbm_pop_lib.modules',
+              'cbm_pop_lib.operators',
+              'cbm_pop_lib.common',],
+    package_dir={'': 'src'})
 
 setup(**setup_args)
