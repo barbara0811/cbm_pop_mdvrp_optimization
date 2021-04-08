@@ -11,7 +11,6 @@ import random
 
 
 class CBMPopAlgorithmMDVRP(CBMPopAlgorithm):
-    
 
     def __init__(self, params, ns_):
         CBMPopAlgorithm.__init__(self, params, ns_)
@@ -57,7 +56,7 @@ class CBMPopAlgorithmMDVRP(CBMPopAlgorithm):
         self.op_score_co[o] += 1
         # apply the operator o
         if o < 2:
-            if o == 0: 
+            if o == 0:
                 # best cost route crossover with best coalition solution
                 p2 = self.best_sol_coalition
             elif o == 1:
@@ -173,9 +172,9 @@ class CBMPopAlgorithmMDVRP(CBMPopAlgorithm):
         else:
             return p1
 
+        offspring.evaluate_schedule(mdvrp.duration_matrix,
+                                    mdvrp.setup_duration_matrix)
         if offspring.check_prec():
-            offspring.evaluate_schedule(mdvrp.duration_matrix,
-                                        mdvrp.setup_duration_matrix)
             return offspring
         else:
             self.logger.warn("Offspring precedence constraints not satisfied.")
