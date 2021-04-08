@@ -62,6 +62,9 @@ class MDVRP(object):
         self.max_vehicle_load = np.zeros(self.k)
 
         self.precedence_graph = nx.DiGraph()
+        # key: source_node, value: [constrained_node, offset_start, offset_end]
+        self.sliding_time_windows = {}
+
         self.criteria = None
         self.problem_variant = None
 
@@ -81,6 +84,13 @@ class MDVRP(object):
                     break
                 labels = line[:-1].split(" ")
                 self.add_precedence_constraint(labels[0], labels[1])
+                if len(labels) == 4:
+                    i = self.customer_labels.index(labels[0]) + 1
+                    j = self.customer_labels.index(labels[1]) + 1
+                    if i not in self.sliding_time_windows:
+                        self.sliding_time_windows[i] = []
+                    self.sliding_time_windows[i].append(
+                        [j, float(labels[2]), float(labels[3])])
 
     def draw_clusters(self, customers, candidate_depots):
         """
