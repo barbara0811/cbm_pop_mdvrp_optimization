@@ -315,10 +315,8 @@ class CBMPopAlgorithm:
 
     def evaluate_population(self, mdvrp):
         for sol in self.population:
-            sol.initialize_schedule(mdvrp.duration_matrix,
-                                    mdvrp.setup_duration_matrix)
-            sol.adjust_schedule(mdvrp.duration_matrix,
-                                mdvrp.setup_duration_matrix)
+            sol.evaluate_schedule(mdvrp.duration_matrix,
+                                  mdvrp.setup_duration_matrix)
         self.fitness = aux.pareto_ranking_procedure_eval(self.population)
 
     ###################
@@ -368,7 +366,7 @@ class CBMPopAlgorithm:
     # Action          #
     ###################
 
-    @abstractmethod
+    @ abstractmethod
     def action(self, mdvrp, o, p1):
         self.logger.error("Specific actions not implemented..")
         raise NotImplementedError
@@ -428,7 +426,9 @@ class CBMPopAlgorithm:
         solution = Chromosome(list(msg.unserved_customers),
                               self.population[0].max_vehicle_load,
                               self.population[0].prec_constraints,
+                              self.population[0].sliding_time_windows,
                               len(self.population[0].start_times) - 1, params)
+        solution.all_customers = self.population[0].all_customers
         routes = json.loads(msg.json_routes)
         capacity = json.loads(msg.json_capacity)
         all_prec = json.loads(msg.json_all_prec)
