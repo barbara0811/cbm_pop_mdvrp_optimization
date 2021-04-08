@@ -11,7 +11,8 @@ from copy import deepcopy
 
 def init_result(tasks, mdvrp, prec, params):
 
-    result = Chromosome(tasks, mdvrp.max_vehicle_load, prec, mdvrp.n, params)
+    result = Chromosome(tasks, mdvrp.max_vehicle_load, prec,
+                        mdvrp.sliding_time_windows, mdvrp.n, params)
     for v in range(mdvrp.k):
         result.add_route(v)
     return result
