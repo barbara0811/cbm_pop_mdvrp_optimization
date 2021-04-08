@@ -63,7 +63,7 @@ class Chromosome(object):
     """
 
     def __init__(self, all_customers, max_vehicle_load, precedence_constraints,
-                 n, params=None):
+                 time_windows, n, params=None):
 
         # key: vehicle label, value: list of routes (tasks are integer indices)
         self.routes = {}
@@ -91,7 +91,10 @@ class Chromosome(object):
         self.unserved_customers = deepcopy(all_customers)
         self.all_customers = deepcopy(all_customers)
 
+        # nx.digraph
         self.prec_constraints = deepcopy(precedence_constraints)
+        # key: source_node, value: [constrained_node, offset_start, offset_end]
+        self.sliding_time_windows = deepcopy(time_windows)
         # precedence + route constraints
         self.all_constraints = deepcopy(precedence_constraints)
 
@@ -108,10 +111,12 @@ class Chromosome(object):
                 self.prec_matrix_indices[x] = i
                 i += 1
             self.est_matrix = np.zeros(len(nl))  # service earliest start time
+            self.lft_matrix = np.zeros(len(nl))  # service latest finish time
         else:
             self.prec_matrix = None
             self.prec_matrix_nl = None
             self.est_matrix = None
+            self.lft_matrix = None
 
         self.init_problem_params(params)
 
@@ -277,6 +282,10 @@ class Chromosome(object):
             if node not in self.unserved_customers:
                 if self.est_matrix[n] - self.start_times[node] > 0.1:
                     return False
+                if self.lft_matrix[n] > 0:
+                    if self.end_times[node] - self.lft_matrix[n] > 0.1:
+                        print [node, self.end_times[node], self.lft_matrix[n]]
+                        return False
         return True
 
     def makespan(self):
@@ -320,7 +329,8 @@ class Chromosome(object):
         params["problem_variant"] = self.problem_variant
         params["criteria"] = self.criteria
         c = Chromosome(self.unserved_customers, self.max_vehicle_load,
-                       self.prec_constraints, len(self.start_times) - 1, params)
+                       self.prec_constraints, self.sliding_time_windows,
+                       len(self.start_times) - 1, params)
         c.routes = deepcopy(self.routes)
         c.all_customers = deepcopy(self.all_customers)
 
@@ -622,6 +632,17 @@ class Chromosome(object):
         mask[n] = 0  # node shouldn't affect itself
         end_times = np.repeat(end_time, self.est_matrix.shape[0])
         end_times = np.multiply(end_times, mask)
+        if node in self.sliding_time_windows:
+            for item in self.sliding_time_windows[node]:
+                i = self.prec_matrix_indices[item[0]]
+                end_times[i] += item[1]
+                # if there is latest finish time constraint
+                if item[2] > 0:
+                    if self.lft_matrix[i] == 0:
+                        self.lft_matrix[i] = end_time + item[2]
+                    else:
+                        self.lft_matrix[i] = min(
+                            self.lft_matrix[i], end_time + item[2])
         self.est_matrix = np.maximum(self.est_matrix, end_times)
 
     def evaluate_schedule(self, duration, setup_time):
@@ -666,6 +687,8 @@ class Chromosome(object):
                         self.total_duration += setup_time[vehicle][route[-1]][0]
         if self.est_matrix is not None:
             self.est_matrix *= 0
+        if self.lft_matrix is not None:
+            self.lft_matrix *= 0
         self.idle_slots = {}
 
     def adjust_schedule(self, duration, setup_time):
@@ -679,7 +702,6 @@ class Chromosome(object):
         """
         start = rospy.get_time()
         constraints = list(nx.topological_sort(self.all_constraints))
-
         for node in constraints:
             if node not in self.all_customers:
                 continue
