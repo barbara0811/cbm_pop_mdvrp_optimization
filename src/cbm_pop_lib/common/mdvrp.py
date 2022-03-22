@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import networkx as nx
 import numpy as np
+import pandas as pd
+import os
+import yaml
 
 import rospkg
 rospack = rospkg.RosPack()
@@ -67,6 +70,59 @@ class MDVRP(object):
 
         self.criteria = None
         self.problem_variant = None
+
+        self.alternatives = None
+
+    def save_to_file(self, fpath, all_vehicles, vehicles=None):
+
+        if not os.path.exists(fpath):
+            os.makedirs(fpath)
+
+        info = {}
+        info["k"] = self.k
+        info["n"] = self.n
+        info["m"] = self.m
+
+        info["vehicle_labels"] = self.vehicle_labels
+        info["customer_labels"] = self.customer_labels
+
+        if vehicles is None:
+            vehicles = self.vehicle_labels
+        for r in range(len(vehicles)):
+            vehicle = vehicles[r]
+            f = open(fpath + "/{}_spec.yaml".format(vehicle), "w")
+
+            yaml.dump(info, f, default_flow_style=False)
+            f.close()
+
+            Id = all_vehicles.index(vehicle)
+            f = open(fpath + "/{}_duration.csv".format(vehicle), 'wb')
+            df = pd.DataFrame(data=self.duration_matrix[Id].astype(float))
+            df.to_csv(f, header=False, float_format='%.2f', index=False)
+            f.close()
+            f = open(fpath + "/{}_setup_duration.csv".format(vehicle), 'wb')
+            df = pd.DataFrame(data=self.setup_duration_matrix[Id].astype(float))
+            df.to_csv(f, header=False, float_format='%.2f', index=False)
+            f.close()
+            f = open(fpath + "/{}_demand.csv".format(vehicle), 'wb')
+            df = pd.DataFrame(data=self.demand_matrix[Id].astype(float))
+            df.to_csv(f, header=False, float_format='%.2f', index=False)
+            f.close()
+            f = open(fpath + "/{}_setup_cost.csv".format(vehicle), 'wb')
+            df = pd.DataFrame(data=self.setup_cost_matrix[Id].astype(float))
+            df.to_csv(f, header=False, float_format='%.2f', index=False)
+            f.close()
+
+    def load_spec_from_file(self, fpath, vehicle, r_id):
+        
+        df = pd.read_csv(fpath + "/{}_duration.csv".format(vehicle), header=None)
+        self.duration_matrix[r_id] = df.to_numpy().reshape((1, self.n + 1))
+        df = pd.read_csv(fpath + "/{}_setup_duration.csv".format(vehicle), header=None)
+        self.setup_duration_matrix[r_id] = df.to_numpy().reshape((1, self.n + 1, self.n + 1))
+        df = pd.read_csv(fpath + "/{}_demand.csv".format(vehicle), header=None)
+        self.demand_matrix[r_id] = df.to_numpy().reshape((1, self.n + 1))
+        df = pd.read_csv(fpath + "/{}_setup_cost.csv".format(vehicle), header=None)
+        self.setup_cost_matrix[r_id] = df.to_numpy().reshape((1, self.n + 1, self.n + 1))
 
     def load_precedence_constraints(self, filepath):
         """

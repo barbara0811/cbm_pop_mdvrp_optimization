@@ -1,4 +1,4 @@
 string agent
 string status # {start, done}
-string[] task_labels 	
+string[] ag_class
 float32[] position

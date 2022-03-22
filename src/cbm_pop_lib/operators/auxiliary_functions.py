@@ -40,8 +40,9 @@ def calc_borderline_customers(vehicles_per_depot, setup, tolerance):
     clustering_criteria = np.zeros(depot_dist.shape)
     for customer in range(setup.shape[1] - 1):
         min_dist = min(depot_dist[customer, :])
-        clustering_criteria[customer, :] = (
-            depot_dist[customer, :] - min_dist) / min_dist
+        if min_dist > 0:
+            clustering_criteria[customer, :] = (
+                depot_dist[customer, :] - min_dist) / min_dist
         depot_candidates = np.where(clustering_criteria[customer, :] < tolerance)
         if len(depot_candidates[0]) > 1:
             borderline_customers.append(customer + 1)
@@ -121,7 +122,7 @@ def best_solution_index(compare, fitness):
                                for i in best2]
     m = min(secondary_ranking_param)
     min_ind2 = [best2[i] for i in range(
-        len(secondary_ranking_param)) if secondary_ranking_param[i] == m]
+        len(secondary_ranking_param)) if abs(secondary_ranking_param[i] - m) < 0.1]
     best3 = list(set(best2) & set(min_ind2))
 
     if len(best3) == 0:

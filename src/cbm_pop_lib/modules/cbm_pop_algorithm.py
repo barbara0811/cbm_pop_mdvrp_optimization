@@ -120,6 +120,7 @@ class CBMPopAlgorithm:
         self.init_population(mdvrp)
         self.evaluate_population(mdvrp)
         self.logger.info("Population initialized and evaluated.")
+
         best = aux.best_solution_index(self.population, self.fitness)
         if len(best) == 1:
             best_ind = best[0]
@@ -131,9 +132,11 @@ class CBMPopAlgorithm:
         time_criteria = [prop.problem_criteria.TIME,
                          prop.problem_criteria.MAKESPAN,
                          prop.problem_criteria.MAKESPANCOST]
+        cost_criteria = [prop.problem_criteria.COST,
+                         prop.problem_criteria.COSTMAKESPAN]
         if self.population[0].criteria in time_criteria:
             setup = mdvrp.setup_duration_matrix
-        elif self.population[0].criteria == prop.problem_criteria.COST:
+        elif self.population[0].criteria in cost_criteria:
             setup = mdvrp.setup_cost_matrix
         [self.borderlineCustomers, self.candidateDepots] = aux.calc_borderline_customers(
             mdvrp.k / mdvrp.m, setup, 0.6)
@@ -258,8 +261,8 @@ class CBMPopAlgorithm:
 
             if iteration % 100 == 0:
                 self.logger.info([iteration, cycle_num, cycle_last_change,
-                                  self.best_solution.get_ranking_params()[0],
-                                  self.best_sol_coalition.get_ranking_params()[0]])
+                                  self.best_solution.get_ranking_params(),
+                                  self.best_sol_coalition.get_ranking_params()])
 
             iteration += 1
 
@@ -270,7 +273,7 @@ class CBMPopAlgorithm:
                     self.done_pub.publish(msg)
                     rospy.sleep(0.1)
                 done_calc = 2
-            if self.done == 1:
+            if self.done == True:
                 break
 
         self.broadcast_solution(self.best_sol_coalition)
@@ -279,7 +282,7 @@ class CBMPopAlgorithm:
         self.logger.info("Weight matrix:\n{}".format(self.weight_matrix))
 
         self.process_best_solutions(mdvrp)
-        self.done = 2
+        self.done = False
         if self.best_sol_coalition is None:
             self.best_sol_coalition = self.best_solution
 
@@ -330,7 +333,6 @@ class CBMPopAlgorithm:
         else:
             prev_op = self.H[-1][1]
             prev_state = self.H[-1][0]
-
             if prev_op < self.divers_num:  # if diversification was applied
                 if prev_state == 0:
                     s = 1
@@ -396,7 +398,9 @@ class CBMPopAlgorithm:
         msg.total_cost = solution.total_cost
         msg.json_capacity = json.dumps(solution.capacity)
         msg.unserved_customers = solution.unserved_customers
+        msg.all_customers = solution.all_customers
         msg.json_all_prec = json.dumps(list(solution.all_constraints.edges()))
+        msg.json_base_prec = json.dumps(list(solution.prec_constraints.edges()))
         if solution.prec_matrix is not None:
             n = solution.prec_matrix.size
             prec = json.dumps(np.reshape(solution.prec_matrix, n).tolist())
@@ -422,19 +426,24 @@ class CBMPopAlgorithm:
         params = {}
         params["problem_variant"] = self.population[0].problem_variant
         params["criteria"] = self.population[0].criteria
+        base_prec_edges = json.loads(msg.json_base_prec)
+        base_prec = nx.DiGraph()
+        for item in base_prec_edges:
+            base_prec.add_edge(item[0], item[1])
         # basic precedence constraints are copied from this agent's solutions..
-        solution = Chromosome(list(msg.unserved_customers),
+        solution = Chromosome(list(msg.all_customers),
                               self.population[0].max_vehicle_load,
-                              self.population[0].prec_constraints,
+                              base_prec,
                               self.population[0].sliding_time_windows,
-                              len(self.population[0].start_times) - 1, params)
-        solution.all_customers = self.population[0].all_customers
+                              len(self.population[0].start_times - 1), params)
+        solution.all_customers = list(msg.all_customers)
         routes = json.loads(msg.json_routes)
         capacity = json.loads(msg.json_capacity)
         all_prec = json.loads(msg.json_all_prec)
         for item in all_prec:
             solution.all_constraints.add_edge(item[0], item[1])
 
+        solution.unserved_customers = list(msg.unserved_customers)
         for d in routes.keys():
             solution.routes[int(d)] = routes[d]
             solution.capacity[int(d)] = capacity[d]

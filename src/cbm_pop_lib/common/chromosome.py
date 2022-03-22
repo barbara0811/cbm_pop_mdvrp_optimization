@@ -144,6 +144,8 @@ class Chromosome(object):
                 self.criteria = prop.problem_criteria.MAKESPAN
             elif criteria == 4:
                 self.criteria = prop.problem_criteria.MAKESPANCOST
+            elif criteria == 5:
+                self.criteria = prop.problem_criteria.COSTMAKESPAN
             else:
                 self.criteria = prop.problem_criteria.TIME
 
@@ -281,6 +283,11 @@ class Chromosome(object):
             n = self.prec_matrix_indices[node]
             if node not in self.unserved_customers:
                 if self.est_matrix[n] - self.start_times[node] > 0.1:
+                    # print [n, node, self.est_matrix[n], self.start_times[node]]
+                    # print self.unserved_customers
+                    # print self.routes
+                    # print self.all_customers
+                    # print ".."
                     return False
                 if self.lft_matrix[n] > 0:
                     if self.end_times[node] - self.lft_matrix[n] > 0.1:
@@ -316,6 +323,8 @@ class Chromosome(object):
             return [self.makespan()]
         elif self.criteria == prop.problem_criteria.MAKESPANCOST:
             return [self.makespan(), self.total_cost]
+        elif self.criteria == prop.problem_criteria.COSTMAKESPAN:
+            return [self.total_cost, self.makespan()]
 
     def clone(self):
         """
@@ -504,20 +513,22 @@ class Chromosome(object):
             logger.error("routes {}".format(self.routes))
             sys.exit(0)  # TODO! return False
 
-        prev_node = 0
-        if insertion_index != 0:
-            prev_node = self.routes[vehicle][route][insertion_index - 1]
+        cost_diff = self.calc_insertion_cost(
+            node, self.routes[vehicle][route], insertion_index, setup_cost, demand)
+        # prev_node = 0
+        # if insertion_index != 0:
+        #     prev_node = self.routes[vehicle][route][insertion_index - 1]
 
-        # calc cost
-        cost_diff = setup_cost[prev_node][node] + demand[node]
-        if insertion_index < len(self.routes[vehicle][route]):
-            next_node = self.routes[vehicle][route][insertion_index]
-        else:
-            next_node = 0
+        # # calc cost
+        # cost_diff = setup_cost[prev_node][node] + demand[node]
+        # if insertion_index < len(self.routes[vehicle][route]):
+        #     next_node = self.routes[vehicle][route][insertion_index]
+        # else:
+        #     next_node = 0
 
-        if (next_node > 0) or (self.problem_variant == prop.problem_variants.CLASSIC):
-            cost_diff += (setup_cost[node][next_node]
-                          - setup_cost[prev_node][next_node])
+        # if (next_node > 0) or (self.problem_variant == prop.problem_variants.CLASSIC):
+        #     cost_diff += (setup_cost[node][next_node]
+        #                   - setup_cost[prev_node][next_node])
 
         # check capacity
         if self.capacity[vehicle] - cost_diff <= 0:
@@ -551,6 +562,7 @@ class Chromosome(object):
             setup_cost (np.matrix): setup cost matrix for all vehicles
 
         """
+        p_old = self.clone()
         last_removed = -1
         for node in nodes:
             for vehicle in self.routes.keys():
@@ -559,12 +571,15 @@ class Chromosome(object):
                 for r in range(len(self.routes[vehicle])):
                     if node in self.routes[vehicle][r]:
                         removal_index = self.routes[vehicle][r].index(node)
-                        self.remove_node(
-                            vehicle, r, removal_index, quality[vehicle],
-                            duration, setup_time, demand[vehicle],
-                            setup_cost[vehicle])
+                        if not self.remove_node(
+                                vehicle, r, removal_index, quality[vehicle],
+                                duration, setup_time, demand[vehicle],
+                                setup_cost[vehicle]):
+                            #print "couldn't remove node {}".format(node)
+                            return [False, p_old]
                         last_removed = node
                         break
+        return [True, None]
 
     def remove_node(self, vehicle, route, removal_index, quality, duration,
                     setup_time, demand, setup_cost):
@@ -598,10 +613,14 @@ class Chromosome(object):
             cost_diff += (setup_cost[prev_node][next_node] -
                           setup_cost[node][next_node])
 
+        if self.capacity[vehicle] - cost_diff < 0.1:
+            #print "can't rem"
+            return False
+
         self.total_quality -= quality[node]
         self.total_cost += cost_diff
         self.capacity[vehicle] -= cost_diff
-
+        
         self.unserved_customers.append(node)
         idle_label = "_" + str(node)
         if idle_label in self.idle_slots:
@@ -613,6 +632,8 @@ class Chromosome(object):
         self.update_all_prec_removal(r, removal_index)
 
         del self.routes[vehicle][route][removal_index]
+
+        return True
 
     def update_successor_EST(self, node):
         """
@@ -788,17 +809,25 @@ class Chromosome(object):
 
         """
         min_cost = []
+        ins_time = []
+        ins_cost = []
         min_index = []
         makespan = []
 
         for vehicle in self.routes.keys():
             if self.capacity[vehicle] - demand[vehicle][node] <= 0:
-                continue
-            [min_cost_, min_index_, makespan_] = self.calc_min_insertion_cost(
+                print "no cap {}".format(vehicle)
+                print self.capacity[vehicle]
+                print demand[vehicle][node]
+                print demand[vehicle]
+                print node
+                return False
+            [min_cost_, ins_time_, ins_cost_, makespan_, min_index_] = self.calc_min_insertion_cost(
                 node, vehicle, duration[vehicle], setup_time[vehicle],
                 demand[vehicle], setup_cost[vehicle])
-
             min_cost.append(min_cost_)
+            ins_time.append(ins_time_)
+            ins_cost.append(ins_cost_)
             min_index.append(min_index_)
             min_index[-1].insert(0, vehicle)
             makespan.append(makespan_)
@@ -806,16 +835,46 @@ class Chromosome(object):
         if len(min_cost) == 0:
             return False
 
+        single_criteria = [prop.problem_criteria.TIME,
+                           prop.problem_criteria.MAKESPAN,
+                           prop.problem_criteria.COST]
         # this is for a single-criteria optimization
-        minimum = min(min_cost)
-        candidates = np.argwhere(np.array(min_cost) - minimum == 0)
-        candidates = candidates.reshape(candidates.size)
-        best_index = min_index[candidates[0]]
+        if self.criteria in single_criteria:
+            if self.criteria == prop.problem_criteria.MAKESPAN:
+                min_list = makespan
+            else:
+                min_list = min_cost
+            minimum = min(min_list)
+            candidates = np.argwhere(np.array(min_list) - minimum < 0.01)
+            candidates = candidates.reshape(candidates.size)
+            best_index = min_index[random.choice(candidates)]
+        else:
+            if self.criteria == prop.problem_criteria.MAKESPANCOST:
+                min_list1 = makespan
+                min_list2 = ins_cost
+                thresh1 = 5
+                thresh2 = 0.5
+            elif self.criteria == prop.problem_criteria.COSTMAKESPAN:
+                min_list1 = ins_cost
+                min_list2 = makespan
+                thresh1 = 0.5
+                thresh2 = 5
+
+            minimum = min(min_list1)
+            candidates1 = np.argwhere(np.array(min_list1) - minimum < thresh1)
+            candidates1 = candidates1.reshape(candidates1.size)
+            if len(candidates1) == 1:
+                best_index = min_index[candidates1[0]]
+            else:
+                minimum = min(min_list2)
+                candidates2 = np.argwhere(np.array(min_list2) - minimum < thresh2)
+                winner = random.choice(candidates2)[0]
+                best_index = min_index[winner]
 
         best_vehicle = best_index[0]
         if minimum > 10e10:
-            logger.warn(
-                "Min cost > 10e10, not adding the node to the solution.")
+            # logger.warn(
+            #     "Min cost > 10e10, not adding the node {} to the solution.".format(node))
             return False
         return self.add_node(node, best_vehicle, best_index[1], best_index[2],
                              quality[best_vehicle], duration, setup_time,
@@ -853,13 +912,13 @@ class Chromosome(object):
 
         return [a, b]
 
-    def calc_insertion_cost(self, j, n, route, setup, static):
+    def calc_insertion_cost(self, n, route, insertion_index, setup, static):
         """
         Calculate the cost of insertion of a node in
 
         Args:
             self (undefined):
-            j (int): insertion index
+            insertion_index (int): insertion index
             n (int): node id
             route (list): route
             setup (np.matrix): setup cost (time) matrix for the vehicle
@@ -874,18 +933,18 @@ class Chromosome(object):
             # if route is empty
             c = setup[0, n]
         else:
-            if j == 0:
+            if insertion_index == 0:
                 c = (setup[0, n]
-                     + setup[n, route[j]]
-                     - setup[0, route[j]])
-            elif j == len(route):
-                c = setup[route[j - 1], n]
+                     + setup[n, route[insertion_index]]
+                     - setup[0, route[insertion_index]])
+            elif insertion_index == len(route):
+                c = setup[route[insertion_index - 1], n]
                 if self.problem_variant == prop.problem_variants.CLASSIC:
-                    c += (setup[n, 0] - setup[route[j - 1], 0])
+                    c += (setup[n, 0] - setup[route[insertion_index - 1], 0])
             else:
-                c = (setup[route[j - 1], n]
-                     + setup[n, route[j]]
-                     - setup[route[j - 1], route[j]])
+                c = (setup[route[insertion_index - 1], n]
+                     + setup[n, route[insertion_index]]
+                     - setup[route[insertion_index - 1], route[insertion_index]])
         c += static[n]
         return c
 
@@ -906,15 +965,17 @@ class Chromosome(object):
             list: [minimal cost, index of min insertion, route makespan]
 
         """
-        min_cost = None
+        min_criteria = None
         min_index = [-1, -1]
         time_criteria = [prop.problem_criteria.TIME,
                          prop.problem_criteria.MAKESPAN,
                          prop.problem_criteria.MAKESPANCOST]
+        cost_criteria = [prop.problem_criteria.COST,
+                         prop.problem_criteria.COSTMAKESPAN]
         if (self.criteria in time_criteria):
             setup = setup_time
             static = duration
-        elif self.criteria == prop.problem_criteria.COST:
+        elif self.criteria in cost_criteria:
             setup = setup_cost
             static = demand
 
@@ -923,28 +984,32 @@ class Chromosome(object):
             [a, b] = self.calc_possible_insertions(route, n)
             for j in range(a, b):
                 # insertion cost at index j
-                c = self.calc_insertion_cost(j, n, route, setup, static)
+                c = self.calc_insertion_cost(n, route, j, setup, static)
                 if self.criteria != prop.problem_criteria.COST:
                     _cost = self.calc_insertion_cost(
-                        j, n, route, setup_cost, demand)
+                        n, route, j, setup_cost, demand)
                 else:
                     _cost = c
                 # check capacity
                 if self.capacity[vehicle] - _cost <= 0:
                     continue
 
-                if min_cost is None:
-                    min_cost = c
+                if min_criteria is None:
+                    min_criteria = c
                     min_index = [i, j]
-                elif c < min_cost:
-                    min_cost = c
+                elif c <= min_criteria:
+                    min_criteria = c
                     min_index = [i, j]
 
-        if min_cost is None:
-            return [sys.maxint, [0, 0], 0]
+        if min_criteria is None:
+            return [sys.maxint, sys.maxint, sys.maxint, sys.maxint, [0, 0]]
         makespan = 0
         route = self.routes[vehicle][min_index[0]]
         if len(route) > 0:
             for i in range(len(route)):
                 makespan += duration[route[i]]
-        return [abs(min_cost), min_index, makespan + duration[n]]
+        ins_cost = self.calc_insertion_cost(
+            n, route, min_index[1], setup_cost, demand)
+        ins_time = self.calc_insertion_cost(
+            n, route, min_index[1], setup_time, duration)
+        return [abs(min_criteria), ins_time, ins_cost, makespan + ins_time, min_index]

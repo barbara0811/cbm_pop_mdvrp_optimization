@@ -6,6 +6,7 @@ import sys
 import os
 import cbm_pop_lib.operators.auxiliary_functions as aux
 from cbm_pop_lib.common import cbm_alg_properties as prop
+import networkx as nx
 
 
 # Crossover
@@ -39,29 +40,58 @@ def crossover_bcrc(vehicle_candidates, p1, p2, quality, duration,
     v2 = random.choice(vehicle_candidates)
     r2 = deepcopy(random.choice(p2.routes[v2]))
 
+    diff1 = set(p1.all_customers) - set(p2.all_customers)
+    diff2 = set(p2.all_customers) - set(p1.all_customers)
     # check for decomposition compatibility
-    if len(set(r1) - set(p2.all_customers)) > 0:
+    if len(diff1) + len(diff2) > 0:
+        print "not compatible"
         return [p1, p2]
-    if len(set(r2) - set(p1.all_customers)) > 0:
-        return [p1, p2]
+
     # remove nodes in r2 from o1 and nodes in r1 from o2
-    o1.remove_nodes(r2, quality, duration, setup_time, demand, setup_cost)
-    o2.remove_nodes(r1, quality, duration, setup_time, demand, setup_cost)
+    [succ, _] = o1.remove_nodes(r2, quality, duration, setup_time, demand, setup_cost)
+    if not succ:
+        #print "can't remove"
+        return [p1, p2]
+    [succ, _] = o2.remove_nodes(r1, quality, duration, setup_time, demand, setup_cost) 
+    if not succ:
+        #print "can't remove"
+        return [p1, p2]
 
     # insert nodes from r2 into routes of o1 (with best insertion cost)
-    while len(r2) > 0:
-        node = random.choice(r2)
-        o1.insertion_minimal_cost(node, quality, duration, setup_time, demand,
-                                  setup_cost)
-        r2.remove(node)
+    _constr = list(nx.topological_sort(o1.prec_constraints))
+    r2_c = [x for x in _constr if x in r2]
+    r2_nc = [x for x in r2 if x not in r2_c]
+    random.shuffle(r2_nc)
+    r2_ord = r2_c + r2_nc
+    rec = len(r2_ord) * 2
+    while len(r2_ord) > 0:
+        if not o1.insertion_minimal_cost(r2_ord[0], quality, duration, setup_time, demand,
+                                  setup_cost):
+            r2_ord.append(r2_ord[0])
+        del r2_ord[0]
+        rec -= 1
+        if rec == 0:
+            print "can't insert"
+            return [p1, p2]
 
     # insert nodes from r1 into routes of o2 (with best insertion cost)
-    while len(r1) > 0:
-        node = random.choice(r1)
-        o2.insertion_minimal_cost(node, quality, duration, setup_time, demand,
-                                  setup_cost)
-        r1.remove(node)
+    _constr = list(nx.topological_sort(o2.prec_constraints))
+    r1_c = [x for x in _constr if x in r1]
+    r1_nc = [x for x in r1 if x not in r1_c]
+    random.shuffle(r1_nc)
+    r1_ord = r1_c + r1_nc
+    rec = len(r1_ord) * 2
+    while len(r1_ord) > 0:
+        if not o2.insertion_minimal_cost(r1_ord[0], quality, duration, setup_time, demand,
+                                  setup_cost):
+            r1_ord.append(r1_ord[0])
+        del r1_ord[0]
+        rec -= 1
+        if rec == 0:
+            print "can't insert"
+            return [p1, p2]
 
+    print "ok"
     return [o1, o2]
 
 
@@ -196,10 +226,12 @@ def swap_nodes(p, v1, r1, n1_index, v2, r2, n2_index, quality, duration,
     old_cost = p.total_cost
     # remove node1 from (v1,r1) and put node2 in the spot
     # remove node2 from (v2,r2) and put node1 in the spot
-    p_res.remove_node(v1, r1, n1_index, quality[v1], duration, setup_time,
-                      demand[v1], setup_cost[v1])
-    p_res.remove_node(v2, r2, n2_index, quality[v2], duration, setup_time,
-                      demand[v2], setup_cost[v2])
+    if not p_res.remove_node(v1, r1, n1_index, quality[v1], duration, setup_time,
+                      demand[v1], setup_cost[v1]):
+        return [False, p, 0]
+    if not p_res.remove_node(v2, r2, n2_index, quality[v2], duration, setup_time,
+                      demand[v2], setup_cost[v2]):
+        return [False, p, 0]
     # insert node2 in route1 in n1_index
     [a, b] = p_res.calc_possible_insertions(route1, node2)
     if n1_index >= a and n1_index < b:
@@ -351,6 +383,8 @@ def mutation_inter_depot_swapping(p1, depot_vehicles, borderline_customers,
         node1 = random.choice(borderline_customers)
     [d1, v1, r1, n1_index] = aux.find_node_route(p1, node1,
                                                  len(depot_vehicles[0]))
+    if min(d1, v1, r1, n1_index) < 0:
+        return p1
     [swap_candidates, swap_candidate_vehicles] = get_swap_candidates(
         p1, d1, v1, node1, borderline_customers, candidate_depots,
         depot_vehicles, demand)
@@ -385,9 +419,10 @@ def mutation_single_customer_rerouting(vehicle, p1, quality, duration,
 
     p_res = p1.clone()
     # remove customer from chromosome
-    p_res.remove_node(vehicle, route, removal_index, quality[vehicle],
+    if not p_res.remove_node(vehicle, route, removal_index, quality[vehicle],
                       duration, setup_time, demand[vehicle],
-                      setup_cost[vehicle])
+                      setup_cost[vehicle]):
+        return p1
 
     # insert customer at best insert location
     if p_res.insertion_minimal_cost(node, quality, duration, setup_time,
@@ -442,6 +477,8 @@ def one_move(p1, quality, duration, setup_time, demand, setup_cost):
     time_criteria = [prop.problem_criteria.TIME,
                      prop.problem_criteria.MAKESPAN,
                      prop.problem_criteria.MAKESPANCOST]
+    cost_criteria = [prop.problem_criteria.COST,
+                     prop.problem_criteria.COSTMAKESPAN]
     for vehicle in p1.routes.keys():
         for r in range(len(p1.routes[vehicle])):
             removal_index = 0
@@ -449,9 +486,10 @@ def one_move(p1, quality, duration, setup_time, demand, setup_cost):
                 p_tmp = p1.clone()
                 node = p1.routes[vehicle][r][removal_index]
                 # remove customer from chromosome
-                p_tmp.remove_node(vehicle, r, removal_index, quality[vehicle],
+                if not p_tmp.remove_node(vehicle, r, removal_index, quality[vehicle],
                                   duration, setup_time, demand[vehicle],
-                                  setup_cost[vehicle])
+                                  setup_cost[vehicle]):
+                    continue
                 # insert customer at best insert location
                 p_tmp.insertion_minimal_cost(
                     node, quality, duration, setup_time, demand,
@@ -459,7 +497,7 @@ def one_move(p1, quality, duration, setup_time, demand, setup_cost):
                 if p1.criteria in time_criteria:
                     p_tmp.evaluate_schedule(duration, setup_time)
                     imp = p_tmp.total_duration - p1.total_duration
-                elif p1.criteria == prop.problem_criteria.COST:
+                elif p1.criteria in cost_criteria:
                     imp = p_tmp.total_cost - p1.total_cost
                 if imp:
                     p1 = p_tmp.clone()
@@ -538,8 +576,9 @@ def one_move_reduce_idle(mdvrp, p1, quality, duration, setup_time, setup_cost,
                                                   demand)
             if best_ind == -1:
                 continue
-            p_res.remove_node(v, r, i, quality[v], duration, setup_time,
-                              demand[v], setup_cost[v])
+            if not p_res.remove_node(v, r, i, quality[v], duration, setup_time,
+                              demand[v], setup_cost[v]):
+                return p1
             if not p_res.add_node(candidate, v, r, best_ind, quality[v], duration,
                                   setup_time, demand[v], setup_cost[v]):
                 return p1
@@ -580,7 +619,9 @@ def two_swap(p1, depot_vehicles, borderline_customers, candidate_depots,
                 time_criteria = [prop.problem_criteria.TIME,
                                  prop.problem_criteria.MAKESPAN,
                                  prop.problem_criteria.MAKESPANCOST]
-                if p1.criteria == prop.problem_criteria.COST:
+                cost_criteria = [prop.problem_criteria.COST,
+                                 prop.problem_criteria.COSTMAKESPAN]
+                if p1.criteria in cost_criteria:
                     imp = cost
                 elif p1.criteria in time_criteria:
                     old_dur = p1.total_duration

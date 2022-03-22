@@ -7,11 +7,20 @@ import rospkg
 import networkx as nx
 from cbm_pop_lib.common.chromosome import Chromosome
 from copy import deepcopy
+import numpy as np
 
 
 def init_result(tasks, mdvrp, prec, params):
 
-    result = Chromosome(tasks, mdvrp.max_vehicle_load, prec,
+    prec_filtered = nx.DiGraph()
+    for edge in prec.edges():
+        if edge[0] in tasks and edge[1] in tasks:
+            prec_filtered.add_edge(edge[0], edge[1])
+            if edge[0] not in prec_filtered.nodes():
+                prec_filtered.add_node(edge[0])
+            if edge[1] not in prec_filtered.nodes():
+                prec_filtered.add_node(edge[1])
+    result = Chromosome(tasks, mdvrp.max_vehicle_load, prec_filtered,
                         mdvrp.sliding_time_windows, mdvrp.n, params)
     for v in range(mdvrp.k):
         result.add_route(v)
@@ -49,16 +58,32 @@ def greedy_insertion(mdvrp, problem_params):
             if (node, succ) not in prec.edges():
                 prec.add_edge(node, succ)
 
-    all_tasks = range(1, mdvrp.n + 1)
+    if mdvrp.alternatives is not None:
+        ratings = np.array(mdvrp.alternative_rating)
+        if len(ratings) < 5:
+            indices = range(len(ratings))
+        else:
+            idx = np.argpartition(ratings, -5)[-5:]
+            indices = idx[np.argsort((-ratings)[idx])]
+        all_tasks = mdvrp.alternatives[random.choice(indices)]
+    else:
+        all_tasks = range(1, mdvrp.n + 1)
+
     result = init_result(all_tasks, mdvrp, prec, problem_params)
 
-    # all_tasks = deepcopy(temp)
-    _constr = list(nx.topological_sort(mdvrp.precedence_graph))
+    _constr = [] 
+    sg = list(nx.weakly_connected_component_subgraphs(mdvrp.precedence_graph))
+    random.shuffle(sg)
+    top_ord = [list(nx.topological_sort(H)) for H in sg]
+    for i in top_ord:
+        _constr.extend(i)
+    # _constr = list(nx.topological_sort(new_graph))
     constr = [x for x in _constr if x in all_tasks]
     ord_tasks = [x for x in all_tasks if x not in constr]
     random.shuffle(ord_tasks)
     ord_tasks = constr + ord_tasks
     check_recursion = 0
+
     while len(ord_tasks) > 0:
         success = result.insertion_minimal_cost(
             ord_tasks[0], mdvrp.quality_matrix, mdvrp.duration_matrix,
@@ -77,7 +102,8 @@ def greedy_insertion(mdvrp, problem_params):
             x = ord_tasks.pop(0)
             if len(ord_tasks) == 0 or check_recursion > len(all_tasks):
                 print result.routes
-                print "couldn't do it ........"
+                print "couldn't do it ........ {}".format(x)
+                print mdvrp.precedence_graph.predecessors(x)
                 print check_recursion
                 raw_input()
                 ord_tasks = deepcopy(all_tasks)
@@ -87,5 +113,5 @@ def greedy_insertion(mdvrp, problem_params):
                 continue
             ord_tasks.append(x)
             check_recursion += 1
-    # raw_input()
+
     return result

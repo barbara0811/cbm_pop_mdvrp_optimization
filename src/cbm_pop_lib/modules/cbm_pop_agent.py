@@ -11,11 +11,14 @@ from cbm_pop_mdvrp.msg import BestSolution, WeightMatrix, MissionInfo, FloatArra
 from std_msgs.msg import String, Empty
 from rospy.numpy_msg import numpy_msg
 from cbm_pop_lib.modules.cbm_pop_algorithm import CBMPopAlgorithm
+from cbm_pop_lib.common.mdvrp import MDVRP
 from math import sqrt
 from abc import abstractmethod
 from cbm_pop_lib.aux import my_logger
 
+
 import os
+import sys
 import rospy
 import numpy as np
 import rospkg
@@ -37,6 +40,8 @@ class CBMPopAgent(object):
         # Agent name
         self.agent_names = rospy.get_param('~name').split(',')
         self.logger.info("Agent names are {}".format(self.agent_names))
+
+        self.agent_classes = []
 
         # Get cbm parameters location (package and path)
         self.cbm_params_path = rospy.get_param('~alg_params_path')
@@ -96,25 +101,33 @@ class CBMPopAgent(object):
         # (after that -- waiting until all agents are done)
         self.alg_done_sub = rospy.Subscriber(
             "alg_done", String, self.finished_cb)
-        # Signal to the caller that the planning procedure is done
-        self.done_pub = rospy.Publisher("done", Empty, queue_size=1)
+        # Signal that the planning procedure is done
+        self.done_pub = rospy.Publisher("done_planning", Empty, queue_size=1)
 
         self.logger.info("initialized topics")
 
     def optimize_cb(self, msg):
 
-        self.load_problem_structure(msg.data)
-        for name in self.agent_names:
-            msg_out = MissionInfo()
-            msg_out.agent = name
-            if self.position[2] > 0:
-                msg_out.position = self.position
-            msg_out.status = "start"
-            self.info_pub.publish(msg_out)
-        # wait a bit to get all messages
+        self.status_update(self.agent_names, "start")
         rospy.sleep(1)
 
+        self.load_problem_structure(msg.data)
+        if len(self.mdvrp_dict.keys()) > 0:
+            self.share_mdvrp()
+
+        self.status_update(self.agent_names, "ready")
+        while self.status != "ready":
+            rospy.sleep(0.2)
+            print ". "
+
+        self.merge_mdvrp()
+
         self.configure_problem_structure(msg.data)
+
+        self.status_update(self.agent_names, "configured")
+        while self.status != "configured":
+            rospy.sleep(0.2)
+            print ".."
 
         if self.mdvrp is not None:
             start = rospy.get_time()
@@ -126,6 +139,7 @@ class CBMPopAgent(object):
 
     @abstractmethod
     def load_problem_structure(self, problem_id):
+        # prepare mdvrp_dict
         self.logger.warn(("No implementation of problem structure definition." +
                           " For full functionality, implement specific cbm" +
                           " agent as in example scenario."))
@@ -139,30 +153,30 @@ class CBMPopAgent(object):
                           " For full functionality, implement specific cbm" +
                           " agent as in example scenario."))
 
-    def share_mdvrp(self, Id):
+    def share_mdvrp(self):
 
-        tmp = self.mdvrp.setup_duration_matrix[Id]
-        tmp = np.reshape(tmp, (tmp.size))
-        self.setup_duration_pub.publish(tmp)
+        for name in self.agent_names:
+            print self.agent_names
+            mdvrp = self.mdvrp_dict[name]
+            tmp = mdvrp.setup_duration_matrix[0]
+            tmp = np.reshape(tmp, (tmp.size))
+            self.setup_duration_pub.publish(tmp)
 
-        tmp = self.mdvrp.setup_cost_matrix[Id]
-        tmp = np.reshape(tmp, (tmp.size))
-        self.setup_cost_pub.publish(tmp)
+            tmp = mdvrp.setup_cost_matrix[0]
+            tmp = np.reshape(tmp, (tmp.size))
+            self.setup_cost_pub.publish(tmp)
 
-        tmp = self.mdvrp.duration_matrix[Id]
-        np.reshape(tmp, (tmp.size))
-        self.duration_pub.publish(tmp)
+            tmp = mdvrp.duration_matrix[0]
+            np.reshape(tmp, (tmp.size))
+            self.duration_pub.publish(tmp)
 
-        tmp = self.mdvrp.demand_matrix[Id]
-        np.reshape(tmp, (tmp.size))
-        self.demand_pub.publish(tmp)
+            tmp = mdvrp.demand_matrix[0]
+            np.reshape(tmp, (tmp.size))
+            self.demand_pub.publish(tmp)
 
-        tmp = self.mdvrp.quality_matrix[Id]
-        np.reshape(tmp, (tmp.size))
-        self.quality_pub.publish(tmp)
-
-        # wait a bit to start (until all info is exchanged)
-        rospy.sleep(1)
+            tmp = mdvrp.quality_matrix[0]
+            np.reshape(tmp, (tmp.size))
+            self.quality_pub.publish(tmp)
 
     def finish_mission(self):
         self.logger.info("Mission planning done.")
@@ -180,6 +194,7 @@ class CBMPopAgent(object):
 
     def init_mission_structures(self):
         self.mdvrp = None
+        self.mdvrp_dict = {}
         self.setupDurationOffset = {}
         self.setupCostOffset = {}
         self.durationOffset = {}
@@ -188,81 +203,99 @@ class CBMPopAgent(object):
 
         self.robot_positions = {}
         self.robot_status = []
+        self.all_robot_classes = set()
         self.position = [-1, -1, -1]
-        # self.robots = []
+        self.status = "no_mission"
         self.logger.info("Initialized mission structures")
+
+    def status_update(self, names, status):
+        for name in names:
+            msg_out = MissionInfo()
+            msg_out.agent = name
+            msg_out.ag_class = self.agent_classes
+            if self.position[2] > 0:
+                msg_out.position = self.position
+            msg_out.status = status
+            self.info_pub.publish(msg_out)
 
     def mission_info_cb(self, msg):
         if msg.status == "start":
             self.robot_positions[msg.agent] = msg.position
             self.robot_status.append(0)
-        elif msg.status == "done":
+            self.all_robot_classes.update(set(msg.ag_class))
+            self.status = "start"
+        if msg.status == "ready":
             labels = self.robot_positions.keys()
             self.robot_status[labels.index(msg.agent)] = 1
             if min(self.robot_status) == 1:
+                self.status = "ready"
+        if msg.status == "configured":
+            labels = self.robot_positions.keys()
+            self.robot_status[labels.index(msg.agent)] = 2
+            if min(self.robot_status) == 2:
+                self.status = "configured"
+        elif msg.status == "done":
+            labels = self.robot_positions.keys()
+            self.robot_status[labels.index(msg.agent)] = 3
+            if min(self.robot_status) == 3:
                 self.algorithm.done = True
+                self.status = "done"
 
     def finished_cb(self, msg):
-        msgOut = MissionInfo()
-        msgOut.agent = msg.data
-        msgOut.status = "done"
-        self.info_pub.publish(msgOut)
+        self.status_update([msg.data], "done")
+
+    def merge_mdvrp(self):
+        agents = self.mdvrp_dict.keys()
+        agents.sort()
+        print agents
+        print "..."
+        all_tasks = self.mdvrp_dict[self.agent_names[0]].customer_labels
+        self.mdvrp = MDVRP(1, len(all_tasks), len(agents))
+        for i in range(len(agents)):
+            ag = agents[i]
+            self.mdvrp.setup_duration_matrix[i] = self.mdvrp_dict[ag].setup_duration_matrix[0]
+            self.mdvrp.setup_cost_matrix[i] = self.mdvrp_dict[ag].setup_cost_matrix[0]
+            self.mdvrp.duration_matrix[i] = self.mdvrp_dict[ag].duration_matrix[0]
+            self.mdvrp.demand_matrix[i] = self.mdvrp_dict[ag].demand_matrix[0]
+            self.mdvrp.quality_matrix[i] = self.mdvrp_dict[ag].quality_matrix[0]
+            self.mdvrp.depot_vehicles[i] = [i]
+            #TODO share this!
+            self.mdvrp.max_vehicle_load[i] = sys.maxint #self.mdvrp_dict[ag].max_vehicle_load[0]
+
+        self.mdvrp.customer_labels = all_tasks
+        self.mdvrp.depot_labels = ['_' + r for r in self.robot_positions.keys()]
+        self.mdvrp.vehicle_labels = [r for r in self.robot_positions.keys()]
+
+        self.mdvrp.precedence_graph = self.mdvrp_dict[self.agent_names[0]].precedence_graph
 
     def setup_duration_cb(self, msg):
         sender = msg._connection_header['callerid'].split('/')[1]
-        n = sqrt(msg.data.size)
-        while self.mdvrp is None:
-            rospy.sleep(0.1)
-        Id = self.mdvrp.vehicle_labels.index(sender)
-        if Id not in self.setupDurationOffset:
-            self.setupDurationOffset[Id] = 0
-        o = self.setupDurationOffset[Id]
-        self.mdvrp.setup_duration_matrix[Id +
-                                         o] = np.reshape(msg.data, (int(n), int(n)))
-        self.setupDurationOffset[Id] += 1
+        n = int(sqrt(msg.data.size))
+        if sender not in self.mdvrp_dict.keys():
+            self.mdvrp_dict[sender] = MDVRP(1, n - 1, 1)
+        self.mdvrp_dict[sender].setup_duration_matrix[0] = np.reshape(msg.data, (n, n))
 
     def setup_cost_cb(self, msg):
         sender = msg._connection_header['callerid'].split('/')[1]
-        n = sqrt(msg.data.size)
-        while self.mdvrp is None:
-            rospy.sleep(0.1)
-        Id = self.mdvrp.vehicle_labels.index(sender)
-        if Id not in self.setupCostOffset:
-            self.setupCostOffset[Id] = 0
-        o = self.setupCostOffset[Id]
-        self.mdvrp.setup_cost_matrix[Id +
-                                     o] = np.reshape(msg.data, (int(n), int(n)))
-        self.setupCostOffset[Id] += 1
+        n = int(sqrt(msg.data.size))
+        if sender not in self.mdvrp_dict.keys():
+            self.mdvrp_dict[sender] = MDVRP(1, n - 1, 1)
+        self.mdvrp_dict[sender].setup_cost_matrix[0] = np.reshape(msg.data, (n, n))
 
     def duration_cb(self, msg):
         sender = msg._connection_header['callerid'].split('/')[1]
-        while self.mdvrp is None:
-            rospy.sleep(0.1)
-        Id = self.mdvrp.vehicle_labels.index(sender)
-        if Id not in self.durationOffset:
-            self.durationOffset[Id] = 0
-        o = self.durationOffset[Id]
-        self.mdvrp.duration_matrix[Id + o] = msg.data
-        self.durationOffset[Id] += 1
+        if sender not in self.mdvrp_dict.keys():
+            self.mdvrp_dict[sender] = MDVRP(1, msg.data.size - 1, 1)
+        self.mdvrp_dict[sender].duration_matrix[0] = msg.data
 
     def demand_cb(self, msg):
         sender = msg._connection_header['callerid'].split('/')[1]
-        while self.mdvrp is None:
-            rospy.sleep(0.1)
-        Id = self.mdvrp.vehicle_labels.index(sender)
-        if Id not in self.demandOffset:
-            self.demandOffset[Id] = 0
-        o = self.demandOffset[Id]
-        self.mdvrp.demand_matrix[Id + o] = msg.data
-        self.demandOffset[Id] += 1
+        if sender not in self.mdvrp_dict.keys():
+            self.mdvrp_dict[sender] = MDVRP(1, msg.data.size - 1, 1)
+        self.mdvrp_dict[sender].demand_matrix[0] = msg.data
 
     def quality_cb(self, msg):
         sender = msg._connection_header['callerid'].split('/')[1]
-        while self.mdvrp is None:
-            rospy.sleep(0.1)
-        Id = self.mdvrp.vehicle_labels.index(sender)
-        if Id not in self.qualityOffset:
-            self.qualityOffset[Id] = 0
-        o = self.qualityOffset[Id]
-        self.mdvrp.quality_matrix[Id + o] = msg.data
-        self.qualityOffset[Id] += 1
+        if sender not in self.mdvrp_dict.keys():
+            self.mdvrp_dict[sender] = MDVRP(1, msg.data.size - 1, 1)
+        self.mdvrp_dict[sender].quality_matrix[0] = msg.data

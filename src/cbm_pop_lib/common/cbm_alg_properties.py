@@ -14,4 +14,4 @@ def enum(**enums):
 
 
 problem_variants = enum(CLASSIC=0, OPEN=1)
-problem_criteria = enum(TIME=1, COST=2, MAKESPAN=3, MAKESPANCOST=4)
+problem_criteria = enum(TIME=1, COST=2, MAKESPAN=3, MAKESPANCOST=4, COSTMAKESPAN=5)
